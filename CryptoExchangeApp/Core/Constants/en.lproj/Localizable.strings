@@ -1,0 +1,65 @@
+/* General */
+"general.ok" = "OK";
+"general.cancel" = "Cancel";
+"general.retry" = "Retry";
+"general.wait_retry" = "Wait & Retry";
+"general.error" = "Error";
+"general.loading" = "Loading...";
+"general.no_data" = "No data available";
+"general.not_available" = "N/A";
+"general.supported" = "Supported";
+
+/* Navigation */
+"nav.back" = "Back";
+"nav.close" = "Close";
+
+/* Exchanges List */
+"exchanges.title" = "Cryptocurrencies";
+"exchanges.empty_state" = "No cryptocurrencies available";
+"exchanges.pull_to_refresh" = "Pull to refresh";
+"exchanges.cell.volume" = "Volume: %@";
+"exchanges.cell.launched" = "Launched: %@";
+
+/* Exchange Detail */
+"detail.title" = "Details";
+"detail.id_label" = "ID: %@";
+"detail.website" = "Website";
+"detail.maker_fee" = "Maker Fee";
+"detail.taker_fee" = "Taker Fee";
+"detail.date_launched" = "Date Launched";
+"detail.trading_pairs" = "Trading Pairs";
+"detail.no_description" = "No description available";
+
+/* Date Formats */
+"date.format.short" = "MM/dd/yyyy";
+"date.format.full" = "MM/dd/yyyy HH:mm";
+"date.locale" = "en_US";
+
+/* Error Titles */
+"error.title.bad_request" = "Invalid Request";
+"error.title.unauthorized" = "Unauthorized";
+"error.title.forbidden" = "Access Denied";
+"error.title.rate_limit" = "Rate Limit Exceeded";
+"error.title.server_error" = "Server Error";
+"error.title.no_data" = "No Data";
+"error.title.decoding" = "Data Error";
+"error.title.network" = "Network Error";
+"error.title.unknown" = "Error";
+
+/* Error Messages */
+"error.message.bad_request" = "Invalid value provided. Please check your request.";
+"error.message.bad_request_id" = "Invalid value for \"id\"";
+"error.message.unauthorized" = "API key is missing or invalid. Please check your configuration.";
+"error.message.forbidden" = "Your API Key subscription plan doesn't support this endpoint. Please upgrade your plan.";
+"error.message.rate_limit" = "You've exceeded your API Key's HTTP request rate limit. Rate limits reset every minute. Please wait a moment.";
+"error.message.server_error" = "An internal server error occurred. Please try again later.";
+"error.message.no_data" = "No data was received from the server.";
+"error.message.decoding" = "Failed to process the data received from the server.";
+"error.message.network" = "Network connection failed: %@";
+"error.message.unknown" = "An unexpected error occurred. Please try again.";
+
+/* Accessibility */
+"accessibility.crypto_logo" = "%@ logo";
+"accessibility.back_button" = "Back to list";
+"accessibility.refresh" = "Refresh list";
+"accessibility.error_icon" = "Error icon";

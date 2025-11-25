@@ -1,0 +1,65 @@
+/* General */
+"general.ok" = "OK";
+"general.cancel" = "Cancelar";
+"general.retry" = "Tentar Novamente";
+"general.wait_retry" = "Aguardar e Tentar";
+"general.error" = "Erro";
+"general.loading" = "Carregando...";
+"general.no_data" = "Sem dados disponíveis";
+"general.not_available" = "N/A";
+"general.supported" = "Suportado";
+
+/* Navigation */
+"nav.back" = "Voltar";
+"nav.close" = "Fechar";
+
+/* Exchanges List */
+"exchanges.title" = "Criptomoedas";
+"exchanges.empty_state" = "Nenhuma criptomoeda disponível";
+"exchanges.pull_to_refresh" = "Puxe para atualizar";
+"exchanges.cell.volume" = "Volume: %@";
+"exchanges.cell.launched" = "Lançada: %@";
+
+/* Exchange Detail */
+"detail.title" = "Detalhes";
+"detail.id_label" = "ID: %@";
+"detail.website" = "Website";
+"detail.maker_fee" = "Taxa Maker";
+"detail.taker_fee" = "Taxa Taker";
+"detail.date_launched" = "Data de Lançamento";
+"detail.trading_pairs" = "Pares de Negociação";
+"detail.no_description" = "Nenhuma descrição disponível";
+
+/* Date Formats */
+"date.format.short" = "dd/MM/yyyy";
+"date.format.full" = "dd/MM/yyyy HH:mm";
+"date.locale" = "pt_BR";
+
+/* Error Titles */
+"error.title.bad_request" = "Requisição Inválida";
+"error.title.unauthorized" = "Não Autorizado";
+"error.title.forbidden" = "Acesso Negado";
+"error.title.rate_limit" = "Limite de Taxa Excedido";
+"error.title.server_error" = "Erro do Servidor";
+"error.title.no_data" = "Sem Dados";
+"error.title.decoding" = "Erro de Dados";
+"error.title.network" = "Erro de Rede";
+"error.title.unknown" = "Erro";
+
+/* Error Messages */
+"error.message.bad_request" = "Valor inválido fornecido. Por favor, verifique sua requisição.";
+"error.message.bad_request_id" = "Valor inválido para \"id\"";
+"error.message.unauthorized" = "Chave de API está ausente ou inválida. Por favor, verifique sua configuração.";
+"error.message.forbidden" = "Seu plano de assinatura da API não suporta este endpoint. Por favor, atualize seu plano.";
+"error.message.rate_limit" = "Você excedeu o limite de requisições HTTP da sua chave de API. Os limites de taxa são redefinidos a cada minuto. Por favor, aguarde um momento.";
+"error.message.server_error" = "Ocorreu um erro interno do servidor. Por favor, tente novamente mais tarde.";
+"error.message.no_data" = "Nenhum dado foi recebido do servidor.";
+"error.message.decoding" = "Falha ao processar os dados recebidos do servidor.";
+"error.message.network" = "Falha na conexão de rede: %@";
+"error.message.unknown" = "Ocorreu um erro inesperado. Por favor, tente novamente.";
+
+/* Accessibility */
+"accessibility.crypto_logo" = "Logo da %@";
+"accessibility.back_button" = "Voltar para lista";
+"accessibility.refresh" = "Atualizar lista";
+"accessibility.error_icon" = "Ícone de erro";
