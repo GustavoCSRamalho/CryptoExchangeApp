@@ -25,7 +25,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:CryptoExchangeApp.xcodeproj",
         "identifier" : "0C5F278D2ED51B6B001CE5FF",
