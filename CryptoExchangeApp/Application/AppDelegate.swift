@@ -8,6 +8,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.main.bounds)
         
+        if UITestingHelper.isUITesting {
+            setupForUITesting()
+        }
+        
         let exchangesViewController = ExchangesFactory.make()
         let navigationController = UINavigationController(rootViewController: exchangesViewController)
         navigationController.navigationBar.prefersLargeTitles = true
@@ -16,5 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         return true
+    }
+    
+    private func setupForUITesting() {
+        let defaultsName = Bundle.main.bundleIdentifier!
+        UserDefaults.standard.removePersistentDomain(forName: defaultsName)
+        
+        UIView.setAnimationsEnabled(false)
     }
 }
