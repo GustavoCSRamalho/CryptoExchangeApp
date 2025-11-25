@@ -108,7 +108,7 @@ final class ExchangeDetailViewController: UIViewController {
     
     private lazy var currenciesLabel: UILabel = {
         let label = UILabel()
-        label.text = "Trading Pairs"
+        label.text = L10n.Detail.tradingPairs
         label.font = DesignSystem.Typography.titleSection
         label.textColor = DesignSystem.Colors.textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -150,7 +150,7 @@ final class ExchangeDetailViewController: UIViewController {
     }
     
     private func setupView() {
-        title = "Details"
+        title = L10n.Detail.title
         view.backgroundColor = DesignSystem.Colors.secondaryBackground
         
         view.addSubview(scrollView)
@@ -296,7 +296,7 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             self.scrollView.isHidden = false
             
             self.nameLabel.text = viewModel.name
-            self.idLabel.text = "ID: \(viewModel.id)"
+            self.idLabel.text = L10n.Detail.idLabel(viewModel.id)
             self.descriptionLabel.text = viewModel.description
             
             if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
@@ -307,10 +307,10 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             
             self.infoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
             
-            self.infoStackView.addArrangedSubview(self.createInfoRow(title: "Website", value: viewModel.website))
-            self.infoStackView.addArrangedSubview(self.createInfoRow(title: "Maker Fee", value: viewModel.makerFee))
-            self.infoStackView.addArrangedSubview(self.createInfoRow(title: "Taker Fee", value: viewModel.takerFee))
-            self.infoStackView.addArrangedSubview(self.createInfoRow(title: "Date Launched", value: viewModel.dateLaunched))
+            self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.website, value: viewModel.website))
+            self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.makerFee, value: viewModel.makerFee))
+            self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.takerFee, value: viewModel.takerFee))
+            self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.dateLaunched, value: viewModel.dateLaunched))
             
             let currenciesCount = viewModel.currencies.count
             let tableHeight = CGFloat(currenciesCount * 60)
@@ -327,7 +327,7 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             
             let apiError: APIError
             if viewModel.message.contains("400") {
-                apiError = .badRequest(message: "Invalid value for \"id\"")
+                apiError = .badRequest(message: L10n.Error.Message.badRequestId)
             } else if viewModel.message.contains("401") {
                 apiError = .unauthorized
             } else if viewModel.message.contains("403") {

@@ -6,7 +6,6 @@ enum ExchangesFactory {
         let interactor = ExchangesInteractor()
         let presenter = ExchangesPresenter()
         
-        // Usar mock network service se estiver em modo de teste
         let network: NetworkServiceProtocol
         if UITestingHelper.isUITesting {
             let mockService = MockNetworkService()

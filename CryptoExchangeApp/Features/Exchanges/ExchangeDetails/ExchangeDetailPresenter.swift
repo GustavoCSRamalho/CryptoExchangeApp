@@ -30,7 +30,7 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
                 if !currencies.contains(where: { $0.name == fiat }) {
                     currencies.append(CurrencyViewModel(
                         name: fiat,
-                        priceUSD: "Supported"
+                        priceUSD: L10n.General.supported
                     ))
                 }
             }
@@ -39,7 +39,7 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
         if currencies.isEmpty {
             currencies.append(CurrencyViewModel(
                 name: cryptocurrency.symbol,
-                priceUSD: "N/A"
+                priceUSD: L10n.General.notAvailable
             ))
         }
         
@@ -47,8 +47,8 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
             id: "\(exchange.id)",
             name: exchange.name,
             logoURL: exchange.logo,
-            description: exchange.description ?? "No description available",
-            website: exchange.urls?.primaryWebsite ?? "N/A",
+            description: exchange.description ?? L10n.Detail.noDescription,
+            website: exchange.urls?.primaryWebsite ?? L10n.General.notAvailable,
             makerFee: formatFee(exchange.makerFee),
             takerFee: formatFee(exchange.takerFee),
             dateLaunched: formatDate(exchange.dateLaunched),
@@ -64,7 +64,7 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
     }
     
     private func formatPrice(_ price: Double?) -> String {
-        guard let price = price else { return "N/A" }
+        guard let price = price else { return L10n.General.notAvailable }
         
         if price >= 1 {
             return String(format: "$%.2f", price)
@@ -76,7 +76,7 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
     }
     
     private func formatFee(_ fee: Double?) -> String {
-        guard let fee = fee else { return "N/A" }
+        guard let fee = fee else { return L10n.General.notAvailable }
         return String(format: "%.2f%%", fee)
     }
     
@@ -87,14 +87,27 @@ final class ExchangeDetailPresenter: ExchangeDetailPresenterProtocol {
 
             if let date = inputFormatter.date(from: dateString) {
                 let outputFormatter = DateFormatter()
-                outputFormatter.dateFormat = "dd/MM/yyyy"
-                outputFormatter.locale = Locale(identifier: "pt_BR")
+                outputFormatter.locale = Locale(identifier: L10n.DateFormat.locale)
 
                 return outputFormatter.string(from: date)
             } else {
                 return dateString
             }
         }
-        return "N/A"
+        return L10n.General.notAvailable
     }
 }
+```
+
+## RESUMO DAS MUDANÇAS:
+
+### ✅ Adicionado no Localizable.strings:
+```
+"date.format.short" = "dd/MM/yyyy";     // pt-BR
+"date.format.short" = "MM/dd/yyyy";     // en
+
+"date.format.full" = "dd/MM/yyyy HH:mm"; // pt-BR
+"date.format.full" = "MM/dd/yyyy HH:mm"; // en
+
+"date.locale" = "pt_BR";  // pt-BR
+"date.locale" = "en_US";  // en

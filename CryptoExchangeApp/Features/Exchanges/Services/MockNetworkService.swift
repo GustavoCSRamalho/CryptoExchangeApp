@@ -1,11 +1,3 @@
-//
-//  MockNetworkService.swift
-//  CryptoExchangeApp
-//
-//  Created by Gustavo Ramalho on 25/11/25.
-//
-
-
 import Foundation
 
 final class MockNetworkService: NetworkServiceProtocol {
@@ -18,14 +10,12 @@ final class MockNetworkService: NetworkServiceProtocol {
         parameters: [String: Any]?,
         completion: @escaping (Result<T, NetworkError>) -> Void
     ) {
-        // Simular delay de rede
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             if self.shouldReturnError {
                 completion(.failure(self.errorToReturn))
                 return
             }
             
-            // Determinar qual mock retornar baseado no endpoint
             let mockData: Data
             
             if endpoint.contains("/cryptocurrency/listings/latest") {

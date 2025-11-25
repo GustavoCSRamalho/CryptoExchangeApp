@@ -48,7 +48,7 @@ final class ExchangesViewController: UIViewController {
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "No cryptocurrencies available"
+        label.text = L10n.Exchanges.emptyState
         label.textColor = DesignSystem.Colors.textSecondary
         label.font = DesignSystem.Typography.body
         label.textAlignment = .center
@@ -63,7 +63,7 @@ final class ExchangesViewController: UIViewController {
     }
     
     private func setupView() {
-        title = "Cryptocurrencies"
+        title = L10n.Exchanges.title
         view.backgroundColor = DesignSystem.Colors.background
         
         view.addSubview(tableView)
@@ -137,7 +137,7 @@ extension ExchangesViewController: ExchangesDisplayLogic {
             
             let apiError: APIError
             if viewModel.message.contains("400") {
-                apiError = .badRequest(message: "Invalid value for \"id\"")
+                apiError = .badRequest(message: L10n.Error.Message.badRequestId)
             } else if viewModel.message.contains("401") {
                 apiError = .unauthorized
             } else if viewModel.message.contains("403") {

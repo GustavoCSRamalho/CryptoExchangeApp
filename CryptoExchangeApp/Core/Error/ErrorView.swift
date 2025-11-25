@@ -47,7 +47,7 @@ final class ErrorView: UIView {
         button.titleLabel?.font = DesignSystem.Typography.body
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
-        button.setTitle("Cancel", for: .normal)
+        button.setTitle(L10n.General.cancel, for: .normal)
         return button
     }()
     

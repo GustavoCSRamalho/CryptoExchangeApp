@@ -14,57 +14,57 @@ enum APIError {
     var title: String {
         switch self {
         case .badRequest:
-            return "Invalid Request"
+            return L10n.Error.Title.badRequest
         case .unauthorized:
-            return "Unauthorized"
+            return L10n.Error.Title.unauthorized
         case .forbidden:
-            return "Access Denied"
+            return L10n.Error.Title.forbidden
         case .tooManyRequests:
-            return "Rate Limit Exceeded"
+            return L10n.Error.Title.rateLimit
         case .internalServerError:
-            return "Server Error"
+            return L10n.Error.Title.serverError
         case .noData:
-            return "No Data"
+            return L10n.Error.Title.noData
         case .decodingError:
-            return "Data Error"
+            return L10n.Error.Title.decoding
         case .networkFailure:
-            return "Network Error"
+            return L10n.Error.Title.network
         case .unknown:
-            return "Error"
+            return L10n.Error.Title.unknown
         }
     }
     
     var message: String {
         switch self {
         case .badRequest(let customMessage):
-            return customMessage ?? "Invalid value provided. Please check your request."
+            return customMessage ?? L10n.Error.Message.badRequest
         case .unauthorized:
-            return "API key is missing or invalid. Please check your configuration."
+            return L10n.Error.Message.unauthorized
         case .forbidden:
-            return "Your API Key subscription plan doesn't support this endpoint. Please upgrade your plan."
+            return L10n.Error.Message.forbidden
         case .tooManyRequests:
-            return "You've exceeded your API Key's HTTP request rate limit. Rate limits reset every minute. Please wait a moment."
+            return L10n.Error.Message.rateLimit
         case .internalServerError:
-            return "An internal server error occurred. Please try again later."
+            return L10n.Error.Message.serverError
         case .noData:
-            return "No data was received from the server."
+            return L10n.Error.Message.noData
         case .decodingError:
-            return "Failed to process the data received from the server."
+            return L10n.Error.Message.decoding
         case .networkFailure(let error):
-            return "Network connection failed: \(error.localizedDescription)"
+            return L10n.Error.Message.network(error.localizedDescription)
         case .unknown:
-            return "An unexpected error occurred. Please try again."
+            return L10n.Error.Message.unknown
         }
     }
     
     var actionButtonTitle: String {
         switch self {
         case .tooManyRequests:
-            return "Wait & Retry"
+            return L10n.General.waitRetry
         case .unauthorized, .forbidden:
-            return "OK"
+            return L10n.General.ok
         default:
-            return "Retry"
+            return L10n.General.retry
         }
     }
     
@@ -82,7 +82,7 @@ extension NetworkError {
     func toAPIError() -> APIError {
         switch self {
         case .invalidURL:
-            return .badRequest(message: "Invalid URL configuration")
+            return .badRequest(message: L10n.Error.Message.badRequest)
         case .noData:
             return .noData
         case .decodingError:
@@ -90,7 +90,7 @@ extension NetworkError {
         case .serverError(let statusCode):
             switch statusCode {
             case 400:
-                return .badRequest(message: "Invalid value for \"id\"")
+                return .badRequest(message: L10n.Error.Message.badRequestId)
             case 401:
                 return .unauthorized
             case 403:

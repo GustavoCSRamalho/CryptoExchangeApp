@@ -77,8 +77,8 @@ final class ExchangeTableViewCell: UITableViewCell {
     
     func configure(with viewModel: CryptocurrencyViewModel) {
         nameLabel.text = viewModel.name
-        volumeLabel.text = "Volume: \(viewModel.spotVolume)"
-        dateLaunchedLabel.text = "Launched: \(viewModel.dateAdded)"
+        volumeLabel.text = L10n.Exchanges.volume(viewModel.spotVolume)
+        dateLaunchedLabel.text = L10n.Exchanges.launched(viewModel.dateAdded)
         
         if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
             logoImageView.kf.setImage(
@@ -86,6 +86,8 @@ final class ExchangeTableViewCell: UITableViewCell {
                 placeholder: UIImage(systemName: "bitcoinsign.circle.fill"),
                 options: [.transition(.fade(0.2))]
             )
+            logoImageView.accessibilityLabel = L10n.Accessibility.cryptoLogo(viewModel.name)
+
         } else {
             logoImageView.image = UIImage(systemName: "bitcoinsign.circle.fill")
         }
