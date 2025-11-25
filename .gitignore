@@ -1,0 +1,25 @@
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+*.xcuserdata
+*.xcscmblueprint
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Configuration
+*.xcconfig
+!Project.xcconfig
+
+# API Keys
+Secrets.swift
+APIKeys.plist
+
+# Build
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
