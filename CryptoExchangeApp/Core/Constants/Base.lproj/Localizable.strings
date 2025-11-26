@@ -52,7 +52,8 @@
 "error.message.unauthorized" = "Chave de API está ausente ou inválida. Por favor, verifique sua configuração.";
 "error.message.forbidden" = "Seu plano de assinatura da API não suporta este endpoint. Por favor, atualize seu plano.";
 "error.message.rate_limit" = "Você excedeu o limite de requisições HTTP da sua chave de API. Os limites de taxa são redefinidos a cada minuto. Por favor, aguarde um momento.";
-"error.message.server_error" = "Ocorreu um erro interno do servidor. Por favor, tente novamente mais tarde.";
+"error.message.server_error" = "Erro do servidor: %@";
+"error.message.invalidURL" = "URL inválida";
 "error.message.no_data" = "Nenhum dado foi recebido do servidor.";
 "error.message.decoding" = "Falha ao processar os dados recebidos do servidor.";
 "error.message.network" = "Falha na conexão de rede: %@";

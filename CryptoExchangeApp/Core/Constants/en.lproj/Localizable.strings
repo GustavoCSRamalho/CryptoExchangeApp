@@ -50,9 +50,10 @@
 "error.message.bad_request" = "Invalid value provided. Please check your request.";
 "error.message.bad_request_id" = "Invalid value for \"id\"";
 "error.message.unauthorized" = "API key is missing or invalid. Please check your configuration.";
+"error.message.invalidURL" = "Invalid URL";
 "error.message.forbidden" = "Your API Key subscription plan doesn't support this endpoint. Please upgrade your plan.";
 "error.message.rate_limit" = "You've exceeded your API Key's HTTP request rate limit. Rate limits reset every minute. Please wait a moment.";
-"error.message.server_error" = "An internal server error occurred. Please try again later.";
+"error.message.server_error" = "Server error: %@";
 "error.message.no_data" = "No data was received from the server.";
 "error.message.decoding" = "Failed to process the data received from the server.";
 "error.message.network" = "Network connection failed: %@";

@@ -11,17 +11,17 @@ enum NetworkError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "Invalid URL"
+            return L10n.Error.Message.invalidURL
         case .noData:
-            return "No data received"
+            return L10n.Error.Message.noData
         case .decodingError:
-            return "Failed to decode response"
+            return L10n.Error.Message.decoding
         case .serverError(let code):
-            return "Server error: \(code)"
+            return L10n.Error.Message.serverError(code)
         case .networkFailure(let error):
-            return "Network error: \(error.localizedDescription)"
+            return  L10n.Error.Message.network(error.localizedDescription)
         case .unknown:
-            return "Unknown error occurred"
+            return L10n.Error.Message.unknown
         }
     }
 }
