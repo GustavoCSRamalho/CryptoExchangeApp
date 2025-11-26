@@ -2,14 +2,14 @@ import UIKit
 import Foundation
 import SnapKit
 
-protocol ExchangesDisplayLogic: AnyObject {
+protocol ExchangesListDisplayLogic: AnyObject {
     func displayExchanges(viewModel: Exchanges.FetchExchanges.ViewModel)
     func displayError(viewModel: Exchanges.Error.ViewModel)
 }
 
-final class ExchangesViewController: UIViewController {
-    var interactor: ExchangesInteractorProtocol?
-    var router: ExchangesRouterProtocol?
+final class ExchangesListViewController: UIViewController {
+    var interactor: ExchangesListInteractorProtocol?
+    var router: ExchangesListRouterProtocol?
     
     private var exchanges: [ExchangeViewModel] = []
     
@@ -23,8 +23,8 @@ final class ExchangesViewController: UIViewController {
         let table = UITableView()
         table.delegate = self
         table.dataSource = self
-        table.register(ExchangeTableViewCell.self, forCellReuseIdentifier: ExchangeTableViewCell.identifier)
-        table.rowHeight = 80
+        table.register(ExchangesListTableViewCell.self, forCellReuseIdentifier: ExchangesListTableViewCell.identifier)
+        table.rowHeight = DesignSystem.CellHeight.exchangeList
         table.separatorColor = DesignSystem.Colors.separator
         table.backgroundColor = DesignSystem.Colors.background
         return table
@@ -88,8 +88,8 @@ final class ExchangesViewController: UIViewController {
         
         emptyStateLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.leading.equalToSuperview().offset(32)
-            make.trailing.equalToSuperview().inset(32)
+            make.leading.equalToSuperview().offset(DesignSystem.Spacing.extraLarge)
+            make.trailing.equalToSuperview().inset(DesignSystem.Spacing.extraLarge)
         }
         
         errorView.snp.makeConstraints { make in
@@ -111,7 +111,7 @@ final class ExchangesViewController: UIViewController {
     }
 }
 
-extension ExchangesViewController: ExchangesDisplayLogic {
+extension ExchangesListViewController: ExchangesListDisplayLogic {
     func displayExchanges(viewModel: Exchanges.FetchExchanges.ViewModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -157,16 +157,16 @@ extension ExchangesViewController: ExchangesDisplayLogic {
     }
 }
 
-extension ExchangesViewController: UITableViewDelegate, UITableViewDataSource {
+extension ExchangesListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return exchanges.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ExchangeTableViewCell.identifier,
+            withIdentifier: ExchangesListTableViewCell.identifier,
             for: indexPath
-        ) as? ExchangeTableViewCell else {
+        ) as? ExchangesListTableViewCell else {
             return UITableViewCell()
         }
         

@@ -30,11 +30,35 @@ enum DesignSystem {
         static let large: CGFloat = 24
         static let extraLarge: CGFloat = 32
     }
+    
+    enum CornerRadius {
+        static let small: CGFloat = 8
+        static let medium: CGFloat = 12
+        static let large: CGFloat = 16
+        static let circle: CGFloat = 50
+    }
+    
+    enum Shadow {
+        static let opacity: Float = 0.1
+        static let radius: CGFloat = 4
+        static let offset = CGSize(width: 0, height: 2)
+        static let color = UIColor.black.cgColor
+    }
+    
+    enum CellHeight {
+        static let exchangeList: CGFloat = 80
+        static let currencyDetail: CGFloat = 60
+    }
+    
+    enum ImageSize {
+        static let logoSmall: CGFloat = 50
+        static let logoMedium: CGFloat = 100
+    }
 }
 
 extension UIColor {
     
-    /// Inicializador de cor com cÃ³digo hexadecimal
+    /// Inicializador de cor com código hexadecimal
     /// - Parameter hex: String no formato "#RRGGBB" ou "RRGGBB"
     convenience init(hex: String) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -51,10 +75,10 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, alpha: 1.0)
     }
     
-    /// Inicializador de cor com cÃ³digo hexadecimal e alpha
+    /// Inicializador de cor com código hexadecimal e alpha
     /// - Parameters:
     ///   - hex: String no formato "#RRGGBB" ou "RRGGBB"
-    ///   - alpha: Valor de transparÃªncia (0.0 a 1.0)
+    ///   - alpha: Valor de transparência (0.0 a 1.0)
     convenience init(hex: String, alpha: CGFloat) {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
@@ -70,7 +94,7 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, alpha: alpha)
     }
     
-    /// Converte UIColor para cÃ³digo hexadecimal
+    /// Converte UIColor para código hexadecimal
     /// - Returns: String no formato "#RRGGBB"
     func toHex() -> String? {
         guard let components = cgColor.components, components.count >= 3 else {
@@ -89,14 +113,14 @@ extension UIColor {
         )
     }
     
-    /// Retorna uma versÃ£o mais clara da cor
+    /// Retorna uma versão mais clara da cor
     /// - Parameter percentage: Percentual de clareamento (0.0 a 1.0)
     /// - Returns: UIColor mais clara
     func lighter(by percentage: CGFloat = 0.2) -> UIColor {
         return adjust(by: abs(percentage))
     }
     
-    /// Retorna uma versÃ£o mais escura da cor
+    /// Retorna uma versão mais escura da cor
     /// - Parameter percentage: Percentual de escurecimento (0.0 a 1.0)
     /// - Returns: UIColor mais escura
     func darker(by percentage: CGFloat = 0.2) -> UIColor {

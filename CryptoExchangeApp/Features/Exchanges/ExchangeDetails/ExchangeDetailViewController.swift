@@ -33,7 +33,7 @@ final class ExchangeDetailViewController: UIViewController {
     private lazy var logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 50
+        imageView.layer.cornerRadius = DesignSystem.CornerRadius.circle
         imageView.clipsToBounds = true
         imageView.backgroundColor = DesignSystem.Colors.cardBackground
         return imageView
@@ -58,11 +58,11 @@ final class ExchangeDetailViewController: UIViewController {
     private lazy var descriptionCard: UIView = {
         let view = UIView()
         view.backgroundColor = DesignSystem.Colors.cardBackground
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.1
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 4
+        view.layer.cornerRadius = DesignSystem.CornerRadius.medium
+        view.layer.shadowColor = DesignSystem.Shadow.color
+        view.layer.shadowOpacity = DesignSystem.Shadow.opacity
+        view.layer.shadowOffset = DesignSystem.Shadow.offset
+        view.layer.shadowRadius = DesignSystem.Shadow.radius
         return view
     }()
     
@@ -77,18 +77,18 @@ final class ExchangeDetailViewController: UIViewController {
     private lazy var infoCard: UIView = {
         let view = UIView()
         view.backgroundColor = DesignSystem.Colors.cardBackground
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.1
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 4
+        view.layer.cornerRadius = DesignSystem.CornerRadius.medium
+        view.layer.shadowColor = DesignSystem.Shadow.color
+        view.layer.shadowOpacity = DesignSystem.Shadow.opacity
+        view.layer.shadowOffset = DesignSystem.Shadow.offset
+        view.layer.shadowRadius = DesignSystem.Shadow.radius
         return view
     }()
     
     private lazy var infoStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 12
+        stack.spacing = DesignSystem.Spacing.medium
         return stack
     }()
     
@@ -105,10 +105,10 @@ final class ExchangeDetailViewController: UIViewController {
         table.delegate = self
         table.dataSource = self
         table.register(ExchangeDetailsTableViewCell.self, forCellReuseIdentifier: ExchangeDetailsTableViewCell.identifier)
-        table.rowHeight = 60
+        table.rowHeight = DesignSystem.CellHeight.currencyDetail
         table.separatorColor = DesignSystem.Colors.separator
         table.backgroundColor = DesignSystem.Colors.cardBackground
-        table.layer.cornerRadius = 12
+        table.layer.cornerRadius = DesignSystem.CornerRadius.medium
         table.isScrollEnabled = false
         return table
     }()
@@ -127,7 +127,9 @@ final class ExchangeDetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) { fatalError("init(coder:) not implemented") }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) not implemented")
+    }
     
     
     // MARK: - View Lifecycle
@@ -163,7 +165,6 @@ final class ExchangeDetailViewController: UIViewController {
         errorView.onRetry = { [weak self] in self?.fetchDetail() }
         errorView.onCancel = { [weak self] in self?.navigationController?.popViewController(animated: true) }
         
-        
         errorView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -179,48 +180,48 @@ final class ExchangeDetailViewController: UIViewController {
         }
         
         logoImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(24)
+            make.top.equalToSuperview().offset(DesignSystem.Spacing.large)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(100)
+            make.width.height.equalTo(DesignSystem.ImageSize.logoMedium)
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(logoImageView.snp.bottom).offset(16)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(logoImageView.snp.bottom).offset(DesignSystem.Spacing.medium)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         idLabel.snp.makeConstraints { make in
-            make.top.equalTo(nameLabel.snp.bottom).offset(4)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(nameLabel.snp.bottom).offset(DesignSystem.Spacing.tiny)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         descriptionCard.snp.makeConstraints { make in
-            make.top.equalTo(idLabel.snp.bottom).offset(24)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(idLabel.snp.bottom).offset(DesignSystem.Spacing.large)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         descriptionLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
+            make.edges.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         infoCard.snp.makeConstraints { make in
-            make.top.equalTo(descriptionCard.snp.bottom).offset(16)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(descriptionCard.snp.bottom).offset(DesignSystem.Spacing.medium)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         infoStackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
+            make.edges.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         currenciesLabel.snp.makeConstraints { make in
-            make.top.equalTo(infoCard.snp.bottom).offset(24)
-            make.left.right.equalToSuperview().inset(16)
+            make.top.equalTo(infoCard.snp.bottom).offset(DesignSystem.Spacing.large)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
         }
         
         currenciesTableView.snp.makeConstraints { make in
-            make.top.equalTo(currenciesLabel.snp.bottom).offset(12)
-            make.left.right.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().offset(-24)
+            make.top.equalTo(currenciesLabel.snp.bottom).offset(DesignSystem.Spacing.medium)
+            make.left.right.equalToSuperview().inset(DesignSystem.Spacing.medium)
+            make.bottom.equalToSuperview().offset(-DesignSystem.Spacing.large)
             
             currenciesTableHeightConstraint = make.height.equalTo(0).constraint
         }
@@ -262,7 +263,7 @@ final class ExchangeDetailViewController: UIViewController {
         
         titleLabel.snp.makeConstraints { make in
             make.left.centerY.equalToSuperview()
-            make.right.equalTo(valueLabel.snp.left).offset(-8)
+            make.right.equalTo(valueLabel.snp.left).offset(-DesignSystem.Spacing.small)
         }
         
         valueLabel.snp.makeConstraints { make in
@@ -312,8 +313,10 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             
             if let logoURL = viewModel.logoURL,
                let url = URL(string: logoURL) {
-                self.logoImageView.kf.setImage(with: url,
-                                               placeholder: UIImage(systemName: "building.columns.fill"))
+                self.logoImageView.kf.setImage(
+                    with: url,
+                    placeholder: UIImage(systemName: "building.columns.fill")
+                )
             } else {
                 self.logoImageView.image = UIImage(systemName: "building.columns.fill")
                 self.logoImageView.tintColor = DesignSystem.Colors.textSecondary
@@ -325,7 +328,7 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.takerFee, value: viewModel.takerFee))
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.dateLaunched, value: viewModel.dateLaunched))
             
-            let height = CGFloat(viewModel.currencies.count * 60)
+            let height = CGFloat(viewModel.currencies.count) * DesignSystem.CellHeight.currencyDetail
             self.currenciesTableHeightConstraint?.update(offset: height)
             self.currenciesTableView.reloadData()
             
@@ -368,7 +371,10 @@ extension ExchangeDetailViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let currency = viewModel?.currencies[indexPath.row]
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ExchangeDetailsTableViewCell.identifier, for: indexPath) as? ExchangeDetailsTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: ExchangeDetailsTableViewCell.identifier,
+            for: indexPath
+        ) as? ExchangeDetailsTableViewCell else {
             return UITableViewCell()
         }
         
