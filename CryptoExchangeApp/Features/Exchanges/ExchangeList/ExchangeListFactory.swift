@@ -13,7 +13,6 @@ enum ExchangesFactory {
             if UITestingHelper.shouldMockNetworkError {
                 mockService.shouldReturnError = true
                 
-                // Configurar tipo de erro baseado nos argumentos
                 if let errorType = UITestingHelper.mockErrorType {
                     switch errorType {
                     case "400":

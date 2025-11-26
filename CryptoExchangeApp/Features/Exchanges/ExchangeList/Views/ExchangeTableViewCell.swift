@@ -75,21 +75,36 @@ final class ExchangeTableViewCell: UITableViewCell {
         ])
     }
     
-    func configure(with viewModel: CryptocurrencyViewModel) {
+    func configure(with viewModel: ExchangeViewModel) {
         nameLabel.text = viewModel.name
         volumeLabel.text = L10n.Exchanges.volume(viewModel.spotVolume)
-        dateLaunchedLabel.text = L10n.Exchanges.launched(viewModel.dateAdded)
+        dateLaunchedLabel.text = L10n.Exchanges.launched(formatDate(viewModel.dateLaunched))
         
         if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
             logoImageView.kf.setImage(
                 with: url,
-                placeholder: UIImage(systemName: "bitcoinsign.circle.fill"),
+                placeholder: UIImage(systemName: "building.columns.fill"),
                 options: [.transition(.fade(0.2))]
             )
-            logoImageView.accessibilityLabel = L10n.Accessibility.cryptoLogo(viewModel.name)
-
         } else {
-            logoImageView.image = UIImage(systemName: "bitcoinsign.circle.fill")
+            logoImageView.image = UIImage(systemName: "building.columns.fill")
+            logoImageView.tintColor = DesignSystem.Colors.textSecondary
         }
+    }
+    
+    private func formatDate(_ dateString: String?) -> String {
+        guard let dateString = dateString else { return L10n.General.notAvailable }
+        
+        let inputFormatter = ISO8601DateFormatter()
+        inputFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        if let date = inputFormatter.date(from: dateString) {
+            let outputFormatter = DateFormatter()
+            outputFormatter.locale = Locale(identifier: L10n.DateFormat.locale)
+            outputFormatter.dateStyle = .long
+            return outputFormatter.string(from: date)
+        }
+        
+        return dateString
     }
 }

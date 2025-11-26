@@ -9,8 +9,8 @@ final class ExchangesPresenter: ExchangesPresenterProtocol {
     weak var viewController: ExchangesDisplayLogic?
     
     func presentExchanges(response: Exchanges.FetchExchanges.Response) {
-        let cryptoViewModels = response.cryptocurrencies.map { CryptocurrencyViewModel(cryptocurrency: $0) }
-        let viewModel = Exchanges.FetchExchanges.ViewModel(cryptocurrencies: cryptoViewModels)
+        let exchangeViewModels = response.exchanges.map { ExchangeViewModel(exchange: $0) }
+        let viewModel = Exchanges.FetchExchanges.ViewModel(exchanges: exchangeViewModels)
         viewController?.displayExchanges(viewModel: viewModel)
     }
     

@@ -1,7 +1,9 @@
 import Foundation
 
 protocol ExchangesWorkerProtocol {
-    func fetchCryptocurrencies(completion: @escaping (Result<[Cryptocurrency], NetworkError>) -> Void)
+    func fetchExchangeListings(completion: @escaping (Result<[ExchangeListing], NetworkError>) -> Void)
+    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void)
+    func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void)
 }
 
 final class ExchangesWorker: ExchangesWorkerProtocol {
@@ -11,18 +13,56 @@ final class ExchangesWorker: ExchangesWorkerProtocol {
         self.networkService = networkService
     }
     
-    func fetchCryptocurrencies(completion: @escaping (Result<[Cryptocurrency], NetworkError>) -> Void) {
+    func fetchExchangeListings(completion: @escaping (Result<[ExchangeListing], NetworkError>) -> Void) {
         let parameters: [String: Any] = [
             "limit": 50,
-            "sort": "market_cap",
-            "sort_dir": "desc",
-            "convert": "USD"
+            "sort": "volume_24h"
         ]
         
         networkService.request(
-            endpoint: "/cryptocurrency/listings/latest",
+            endpoint: "/exchange/listings/latest",
             parameters: parameters
-        ) { (result: Result<CryptocurrencyListResponse, NetworkError>) in
+        ) { (result: Result<ExchangeListingsResponse, NetworkError>) in
+            switch result {
+            case .success(let response):
+                completion(.success(response.data))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
+        let parameters: [String: Any] = [
+            "id": id
+        ]
+        
+        networkService.request(
+            endpoint: "/exchange/info",
+            parameters: parameters
+        ) { (result: Result<ExchangeInfoResponse, NetworkError>) in
+            switch result {
+            case .success(let response):
+                if let exchange = response.data.values.first {
+                    completion(.success(exchange))
+                } else {
+                    completion(.failure(.noData))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void) {
+        let parameters: [String: Any] = [
+            "id": id
+        ]
+        
+        networkService.request(
+            endpoint: "/exchange/assets",
+            parameters: parameters
+        ) { (result: Result<ExchangeAssetsResponse, NetworkError>) in
             switch result {
             case .success(let response):
                 completion(.success(response.data))

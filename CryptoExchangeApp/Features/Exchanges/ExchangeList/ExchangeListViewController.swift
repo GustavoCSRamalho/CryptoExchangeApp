@@ -10,7 +10,7 @@ final class ExchangesViewController: UIViewController {
     var interactor: ExchangesInteractorProtocol?
     var router: ExchangesRouterProtocol?
     
-    private var cryptocurrencies: [CryptocurrencyViewModel] = []
+    private var exchanges: [ExchangeViewModel] = []
     
     private lazy var errorView: ErrorView = {
         let view = ErrorView()
@@ -119,11 +119,11 @@ final class ExchangesViewController: UIViewController {
 extension ExchangesViewController: ExchangesDisplayLogic {
     func displayExchanges(viewModel: Exchanges.FetchExchanges.ViewModel) {
         DispatchQueue.main.async { [weak self] in
-            self?.cryptocurrencies = viewModel.cryptocurrencies
+            self?.exchanges = viewModel.exchanges
             self?.tableView.reloadData()
             self?.loadingIndicator.stopAnimating()
             self?.refreshControl.endRefreshing()
-            self?.emptyStateLabel.isHidden = !viewModel.cryptocurrencies.isEmpty
+            self?.emptyStateLabel.isHidden = !viewModel.exchanges.isEmpty
             
             self?.errorView.isHidden = true
             self?.tableView.isHidden = false
@@ -159,7 +159,7 @@ extension ExchangesViewController: ExchangesDisplayLogic {
 
 extension ExchangesViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cryptocurrencies.count
+        return exchanges.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -170,8 +170,8 @@ extension ExchangesViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         
-        let crypto = cryptocurrencies[indexPath.row]
-        cell.configure(with: crypto)
+        let exchange = exchanges[indexPath.row]
+        cell.configure(with: exchange)
         cell.accessoryType = .disclosureIndicator
         return cell
     }
@@ -180,8 +180,8 @@ extension ExchangesViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let request = Exchanges.SelectExchange.Request(index: indexPath.row)
-        if let selectedCrypto = interactor?.selectExchange(request: request) {
-            router?.navigateToExchangeDetail(cryptocurrency: selectedCrypto)
+        if let selectedExchange = interactor?.selectExchange(request: request) {
+            router?.navigateToExchangeDetail(exchange: selectedExchange)
         }
     }
 }

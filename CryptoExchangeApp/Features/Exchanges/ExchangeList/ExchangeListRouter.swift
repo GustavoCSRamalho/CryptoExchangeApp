@@ -1,14 +1,14 @@
 import UIKit
 
 protocol ExchangesRouterProtocol {
-    func navigateToExchangeDetail(cryptocurrency: Cryptocurrency)
+    func navigateToExchangeDetail(exchange: ExchangeListing)
 }
 
 final class ExchangesRouter: ExchangesRouterProtocol {
     weak var viewController: UIViewController?
     
-    func navigateToExchangeDetail(cryptocurrency: Cryptocurrency) {
-        let detailViewController = ExchangeDetailFactory.make(cryptocurrency: cryptocurrency)
+    func navigateToExchangeDetail(exchange: ExchangeListing) {
+        let detailViewController = ExchangeDetailFactory.make(exchange: exchange)
         viewController?.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
