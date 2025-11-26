@@ -13,20 +13,66 @@ final class ExchangesListInteractor: ExchangesListInteractorProtocol {
     
     func fetchExchanges(request: Exchanges.FetchExchanges.Request) {
         worker?.fetchExchangeListings { [weak self] result in
-            switch result {
-            case .success(let exchangeListings):
-                self?.exchanges = exchangeListings
-                let response = Exchanges.FetchExchanges.Response(exchanges: exchangeListings)
-                self?.presenter?.presentExchanges(response: response)
-            case .failure(let error):
-                let response = Exchanges.Error.Response(message: error.localizedDescription)
-                self?.presenter?.presentError(response: response)
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let listings):
+                    Task {
+                        let enrichedListings = await self.fetchAllInfosInParallel(listings: listings)
+                        
+                        self.exchanges = enrichedListings
+                        let response = Exchanges.FetchExchanges.Response(exchanges: enrichedListings)
+                        self.presenter?.presentExchanges(response: response)
+                    }
+                    
+                case .failure(let error):
+                    let response = Exchanges.Error.Response(message: error.localizedDescription)
+                    self.presenter?.presentError(response: response)
+                }
             }
-        }
     }
     
     func selectExchange(request: Exchanges.SelectExchange.Request) -> ExchangeListing? {
         guard request.index < exchanges.count else { return nil }
         return exchanges[request.index]
+    }
+    
+}
+
+extension ExchangesListInteractor {
+    private func fetchAllInfosInParallel(listings: [ExchangeListing]) async -> [ExchangeListing] {
+        await withTaskGroup(of: ExchangeListing.self) { group in
+            var result: [ExchangeListing] = []
+            result.reserveCapacity(listings.count)
+            
+            for item in listings {
+                group.addTask {
+                    let info = await self.safeFetchInfo(id: item.id)
+                    
+                    var enriched = ExchangeListing(id: item.id, name: item.name, slug: item.slug, logo: info?.logo ?? item.logo, numMarketPairs: item.numMarketPairs, spotVolumeUsd: item.spotVolumeUsd, dateLaunched: item.dateLaunched)
+                    
+                    return enriched
+                }
+            }
+            
+            for await enriched in group {
+                result.append(enriched)
+            }
+            
+            return result
+        }
+    }
+    
+    private func safeFetchInfo(id: Int) async -> Exchange? {
+        await withCheckedContinuation { continuation in
+            worker?.fetchExchangeInfo(id: id) { result in
+                switch result {
+                case .success(let info):
+                    continuation.resume(returning: info)
+                case .failure:
+                    continuation.resume(returning: nil)
+                }
+            }
+        }
     }
 }

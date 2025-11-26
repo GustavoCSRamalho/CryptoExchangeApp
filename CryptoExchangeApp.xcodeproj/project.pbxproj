@@ -41,48 +41,14 @@
 		0CFF7BE62ED6359600BA22EA /* CryptoExchangeApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoExchangeApp.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0CFF7BCE2ED62B6200BA22EA /* Exceptions for "CryptoExchangeAppTests" folder in "CryptoExchangeAppTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				ExchangeDetailPresenterTests.swift,
-			);
-			target = 0C5F27832ED51B6B001CE5FF /* CryptoExchangeAppTests */;
-		};
-		0CFF7BEE2ED6662000BA22EA /* Exceptions for "CryptoExchangeApp" folder in "CryptoExchangeApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"/Localized: Core/Constants/Localizable.strings",
-			);
-			target = 0C5F27752ED51B68001CE5FF /* CryptoExchangeApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		0CFF7BEF2ED6662000BA22EA /* Exceptions for "CryptoExchangeApp" folder in "Compile Sources" phase from "CryptoExchangeApp" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 0C5F27722ED51B68001CE5FF /* Sources */;
-			membershipExceptions = (
-				"/Localized: Core/Constants/Localizable.strings",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0C5F27782ED51B68001CE5FF /* CryptoExchangeApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				0CFF7BEE2ED6662000BA22EA /* Exceptions for "CryptoExchangeApp" folder in "CryptoExchangeApp" target */,
-				0CFF7BEF2ED6662000BA22EA /* Exceptions for "CryptoExchangeApp" folder in "Compile Sources" phase from "CryptoExchangeApp" target */,
-			);
 			path = CryptoExchangeApp;
 			sourceTree = "<group>";
 		};
 		0C5F27872ED51B6B001CE5FF /* CryptoExchangeAppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				0CFF7BCE2ED62B6200BA22EA /* Exceptions for "CryptoExchangeAppTests" folder in "CryptoExchangeAppTests" target */,
-			);
 			path = CryptoExchangeAppTests;
 			sourceTree = "<group>";
 		};

@@ -42,7 +42,7 @@ struct ExchangeViewModel {
         self.id = exchange.id
         self.name = exchange.name
         self.slug = exchange.slug
-        self.logoURL = nil
+        self.logoURL = exchange.logo
         
         if let volume = exchange.spotVolumeUsd {
             if volume >= 1_000_000_000 {
