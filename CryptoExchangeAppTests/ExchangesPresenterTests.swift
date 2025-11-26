@@ -77,6 +77,7 @@ final class ExchangesPresenterTests: XCTestCase {
             id: 270,
             name: "Binance",
             slug: "binance",
+            logo: "https://s2.coinmarketcap.com/static/img/coins/64x64/1.png",
             numMarketPairs: 2000,
             spotVolumeUsd: 15000000000.0,
             dateLaunched: "2017-07-14T00:00:00.000Z"
