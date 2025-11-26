@@ -164,8 +164,6 @@ final class ExchangeDetailViewController: UIViewController {
         errorView.onCancel = { [weak self] in self?.navigationController?.popViewController(animated: true) }
         
         
-        // MARK: SnapKit Constraints
-        
         errorView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -233,15 +231,11 @@ final class ExchangeDetailViewController: UIViewController {
     }
     
     
-    // MARK: - Fetch
-    
     private func fetchDetail() {
         loadingIndicator.startAnimating()
         interactor?.fetchDetail(request: ExchangeDetail.FetchDetail.Request(exchangeId: exchangeId))
     }
     
-    
-    // MARK: - Info Row Builder (SnapKit)
     
     private func createInfoRow(title: String, value: String) -> UIView {
         let container = UIView()
@@ -276,7 +270,7 @@ final class ExchangeDetailViewController: UIViewController {
             make.width.greaterThanOrEqualTo(100)
         }
         
-        if title.lowercased() == "website" || title.lowercased() == "site" {
+        if title.lowercased() == "website" {
             valueLabel.textColor = DesignSystem.Colors.primary
             valueLabel.isUserInteractionEnabled = true
             
