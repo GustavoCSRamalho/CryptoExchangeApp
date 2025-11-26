@@ -256,6 +256,8 @@ final class ExchangeDetailViewController: UIViewController {
         valueLabel.textColor = DesignSystem.Colors.textPrimary
         valueLabel.text = value
         valueLabel.textAlignment = .right
+        valueLabel.numberOfLines = 1
+        valueLabel.lineBreakMode = .byTruncatingTail
         
         container.addSubview(titleLabel)
         container.addSubview(valueLabel)
@@ -274,7 +276,29 @@ final class ExchangeDetailViewController: UIViewController {
             make.width.greaterThanOrEqualTo(100)
         }
         
+        if title.lowercased() == "website" || title.lowercased() == "site" {
+            valueLabel.textColor = DesignSystem.Colors.primary
+            valueLabel.isUserInteractionEnabled = true
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleWebsiteTap(_:)))
+            valueLabel.addGestureRecognizer(tap)
+        }
+        
         return container
+    }
+    
+    @objc private func handleWebsiteTap(_ sender: UITapGestureRecognizer) {
+        guard let label = sender.view as? UILabel,
+              let urlString = label.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              var url = URL(string: urlString) else { return }
+        
+        if !urlString.lowercased().hasPrefix("http") {
+            if let fixedURL = URL(string: "https://" + urlString) {
+                url = fixedURL
+            }
+        }
+        
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 }
 
