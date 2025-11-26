@@ -14,7 +14,7 @@
 "nav.close" = "Fechar";
 
 /* Exchanges List */
-"exchanges.title" = "Criptomoedas";
+"exchanges.title" = "Corretoras";
 "exchanges.empty_state" = "Nenhuma criptomoeda disponível";
 "exchanges.pull_to_refresh" = "Puxe para atualizar";
 "exchanges.cell.volume" = "Volume: %@";

@@ -14,7 +14,7 @@
 "nav.close" = "Close";
 
 /* Exchanges List */
-"exchanges.title" = "Cryptocurrencies";
+"exchanges.title" = "Exchanges";
 "exchanges.empty_state" = "No cryptocurrencies available";
 "exchanges.pull_to_refresh" = "Pull to refresh";
 "exchanges.cell.volume" = "Volume: %@";
