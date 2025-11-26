@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 final class ExchangeDetailsTableViewCell: UITableViewCell {
     static let identifier = "ExchangeDetailsTableViewCell"
@@ -7,7 +8,6 @@ final class ExchangeDetailsTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystem.Typography.subtitle
         label.textColor = DesignSystem.Colors.textPrimary
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -16,7 +16,6 @@ final class ExchangeDetailsTableViewCell: UITableViewCell {
         label.font = DesignSystem.Typography.body
         label.textColor = DesignSystem.Colors.success
         label.textAlignment = .right
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -30,18 +29,22 @@ final class ExchangeDetailsTableViewCell: UITableViewCell {
     }
     
     private func setupView() {
+        backgroundColor = DesignSystem.Colors.cardBackground
+        
         contentView.addSubview(nameLabel)
         contentView.addSubview(priceLabel)
         
-        NSLayoutConstraint.activate([
-            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nameLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: priceLabel.leadingAnchor, constant: -8),
-            
-            priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            priceLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            priceLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100)
-        ])
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(DesignSystem.Spacing.medium)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(priceLabel.snp.leading).offset(-DesignSystem.Spacing.small)
+        }
+        
+        priceLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(DesignSystem.Spacing.medium)
+            make.centerY.equalToSuperview()
+            make.width.greaterThanOrEqualTo(100)
+        }
     }
     
     func configure(with viewModel: CurrencyViewModel) {

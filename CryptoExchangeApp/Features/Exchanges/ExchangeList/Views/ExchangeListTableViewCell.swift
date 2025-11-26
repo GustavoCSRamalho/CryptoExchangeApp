@@ -1,14 +1,14 @@
 import UIKit
 import Kingfisher
+import SnapKit
 
-final class ExchangesListTableViewCell: UITableViewCell {
+final class ExchangeListTableViewCell: UITableViewCell {
     static let identifier = "ExchangeTableViewCell"
     
     private let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = DesignSystem.ImageSize.logoSmall / 2
         imageView.clipsToBounds = true
         imageView.backgroundColor = DesignSystem.Colors.secondaryBackground
         return imageView
@@ -16,9 +16,8 @@ final class ExchangesListTableViewCell: UITableViewCell {
     
     private let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        label.font = DesignSystem.Typography.subtitle
         label.textColor = DesignSystem.Colors.textPrimary
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -26,7 +25,6 @@ final class ExchangesListTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystem.Typography.body
         label.textColor = DesignSystem.Colors.textSecondary
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -34,15 +32,13 @@ final class ExchangesListTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = DesignSystem.Typography.caption
         label.textColor = DesignSystem.Colors.textSecondary
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let leftStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
-        stack.spacing = 4
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = DesignSystem.Spacing.tiny
         return stack
     }()
     
@@ -55,6 +51,12 @@ final class ExchangesListTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        logoImageView.kf.cancelDownloadTask()
+        logoImageView.image = nil
+    }
+    
     private func setupView() {
         contentView.addSubview(logoImageView)
         contentView.addSubview(leftStackView)
@@ -63,16 +65,17 @@ final class ExchangesListTableViewCell: UITableViewCell {
         leftStackView.addArrangedSubview(volumeLabel)
         leftStackView.addArrangedSubview(dateLaunchedLabel)
         
-        NSLayoutConstraint.activate([
-            logoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            logoImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 50),
-            logoImageView.heightAnchor.constraint(equalToConstant: 50),
-            
-            leftStackView.leadingAnchor.constraint(equalTo: logoImageView.trailingAnchor, constant: 12),
-            leftStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            leftStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
-        ])
+        logoImageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(DesignSystem.Spacing.medium)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(DesignSystem.ImageSize.logoSmall)
+        }
+        
+        leftStackView.snp.makeConstraints { make in
+            make.leading.equalTo(logoImageView.snp.trailing).offset(DesignSystem.Spacing.medium)
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().inset(DesignSystem.Spacing.medium)
+        }
     }
     
     func configure(with viewModel: ExchangeViewModel) {
@@ -81,10 +84,20 @@ final class ExchangesListTableViewCell: UITableViewCell {
         dateLaunchedLabel.text = L10n.Exchanges.launched(formatDate(viewModel.dateLaunched))
         
         if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
+            let processor = DownsamplingImageProcessor(size: CGSize(
+                width: DesignSystem.ImageSize.logoSmall,
+                height: DesignSystem.ImageSize.logoSmall
+            ))
+            
             logoImageView.kf.setImage(
                 with: url,
                 placeholder: UIImage(systemName: "building.columns.fill"),
-                options: [.transition(.fade(0.2))]
+                options: [
+                    .processor(processor),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.fade(0.2)),
+                    .cacheOriginalImage
+                ]
             )
         } else {
             logoImageView.image = UIImage(systemName: "building.columns.fill")

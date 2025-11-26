@@ -23,7 +23,7 @@ final class ExchangesListViewController: UIViewController {
         let table = UITableView()
         table.delegate = self
         table.dataSource = self
-        table.register(ExchangesListTableViewCell.self, forCellReuseIdentifier: ExchangesListTableViewCell.identifier)
+        table.register(ExchangeListTableViewCell.self, forCellReuseIdentifier: ExchangeListTableViewCell.identifier)
         table.rowHeight = DesignSystem.CellHeight.exchangeList
         table.separatorColor = DesignSystem.Colors.separator
         table.backgroundColor = DesignSystem.Colors.background
@@ -164,9 +164,9 @@ extension ExchangesListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ExchangesListTableViewCell.identifier,
+            withIdentifier: ExchangeListTableViewCell.identifier,
             for: indexPath
-        ) as? ExchangesListTableViewCell else {
+        ) as? ExchangeListTableViewCell else {
             return UITableViewCell()
         }
         
