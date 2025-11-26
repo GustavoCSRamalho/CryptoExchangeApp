@@ -6,21 +6,15 @@ protocol AsyncExecutorProtocol {
 
 final class AsyncExecutor: AsyncExecutorProtocol {
     func run(_ operation: @escaping () async -> Void) {
-        Task {
+        Task.detached(priority: .background) {
             await operation()
         }
     }
 }
 
+
 final class AsyncExecutorMock: AsyncExecutorProtocol {
-    
-    var didRun = false
-    var capturedOperation: (() async -> Void)?
-
     func run(_ operation: @escaping () async -> Void) {
-        didRun = true
-        capturedOperation = operation
-
         Task {
             await operation()
         }
