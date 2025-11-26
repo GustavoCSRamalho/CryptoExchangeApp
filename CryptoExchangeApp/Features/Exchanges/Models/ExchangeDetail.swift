@@ -1,16 +1,14 @@
 import Foundation
 
-import Foundation
-
 enum ExchangeDetail {
     enum FetchDetail {
         struct Request {
-            let cryptocurrency: Cryptocurrency
+            let exchangeId: Int
         }
         
         struct Response {
             let exchange: Exchange
-            let cryptocurrency: Cryptocurrency
+            let assets: [ExchangeAsset]
         }
         
         struct ViewModel {
