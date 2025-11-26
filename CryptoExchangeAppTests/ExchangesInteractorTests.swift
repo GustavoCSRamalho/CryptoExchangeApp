@@ -2,15 +2,15 @@ import XCTest
 @testable import CryptoExchangeApp
 
 final class ExchangesInteractorTests: XCTestCase {
-    var sut: ExchangesInteractor!
-    var presenterSpy: ExchangesPresenterSpy!
-    var workerSpy: ExchangesWorkerSpy!
+    var sut: ExchangesListInteractor!
+    var presenterSpy: ExchangesListPresenterSpy!
+    var workerSpy: ExchangesListWorkerSpy!
     
     override func setUp() {
         super.setUp()
-        sut = ExchangesInteractor()
-        presenterSpy = ExchangesPresenterSpy()
-        workerSpy = ExchangesWorkerSpy()
+        sut = ExchangesListInteractor()
+        presenterSpy = ExchangesListPresenterSpy()
+        workerSpy = ExchangesListWorkerSpy()
         sut.presenter = presenterSpy
         sut.worker = workerSpy
     }
@@ -93,7 +93,7 @@ final class ExchangesInteractorTests: XCTestCase {
 }
 
 // MARK: - Spies
-class ExchangesPresenterSpy: ExchangesPresenterProtocol {
+class ExchangesListPresenterSpy: ExchangesListPresenterProtocol {
     var presentExchangesCalled = false
     var presentErrorCalled = false
     var presentedExchanges: [ExchangeListing]?
@@ -108,20 +108,12 @@ class ExchangesPresenterSpy: ExchangesPresenterProtocol {
     }
 }
 
-class ExchangesWorkerSpy: ExchangesWorkerProtocol {
+class ExchangesListWorkerSpy: ExchangesListWorkerProtocol {
     var fetchExchangeListingsResult: Result<[ExchangeListing], NetworkError>?
     
     func fetchExchangeListings(completion: @escaping (Result<[ExchangeListing], NetworkError>) -> Void) {
         if let result = fetchExchangeListingsResult {
             completion(result)
         }
-    }
-    
-    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
-        // Not used in list tests
-    }
-    
-    func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void) {
-        // Not used in list tests
     }
 }

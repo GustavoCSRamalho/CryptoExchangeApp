@@ -2,13 +2,13 @@ import XCTest
 @testable import CryptoExchangeApp
 
 final class ExchangesPresenterTests: XCTestCase {
-    var sut: ExchangesPresenter!
-    var viewControllerSpy: ExchangesViewControllerSpy!
+    var sut: ExchangesListPresenter!
+    var viewControllerSpy: ExchangesListViewControllerSpy!
     
     override func setUp() {
         super.setUp()
-        sut = ExchangesPresenter()
-        viewControllerSpy = ExchangesViewControllerSpy()
+        sut = ExchangesListPresenter()
+        viewControllerSpy = ExchangesListViewControllerSpy()
         sut.viewController = viewControllerSpy
     }
     
@@ -84,7 +84,7 @@ final class ExchangesPresenterTests: XCTestCase {
     }
 }
 
-class ExchangesViewControllerSpy: ExchangesDisplayLogic {
+class ExchangesListViewControllerSpy: ExchangesListDisplayLogic {
     var displayExchangesCalled = false
     var displayErrorCalled = false
     var displayedExchanges: [ExchangeViewModel]?
