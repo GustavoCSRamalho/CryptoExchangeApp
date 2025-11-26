@@ -1,7 +1,7 @@
 import UIKit
 
-final class CurrencyTableViewCell: UITableViewCell {
-    static let identifier = "CurrencyTableViewCell"
+final class ExchangeTableViewCell: UITableViewCell {
+    static let identifier = "ExchangeTableViewCell"
     
     private let nameLabel: UILabel = {
         let label = UILabel()
