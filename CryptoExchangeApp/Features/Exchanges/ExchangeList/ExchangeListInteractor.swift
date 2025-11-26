@@ -9,34 +9,40 @@ final class ExchangesListInteractor: ExchangesListInteractorProtocol {
     var presenter: ExchangesListPresenterProtocol?
     var worker: ExchangesListWorkerProtocol?
     var executor: AsyncExecutorProtocol?
-    
+
     private var exchanges: [ExchangeListing] = []
-    
-    
+
     func fetchExchanges(request: Exchanges.FetchExchanges.Request) {
         worker?.fetchExchangeListings { [weak self] result in
             guard let self else { return }
-            
+
             switch result {
             case .success(let listings):
 
+                self.exchanges = listings
+                self.presenter?.presentExchanges(
+                    response: .init(exchanges: listings)
+                )
+
                 self.executor?.run { [weak self] in
                     guard let self else { return }
-
+                    
                     let enriched = await self.fetchAllInfosInParallel(listings: listings)
-                    self.exchanges = enriched
 
-                    let response = Exchanges.FetchExchanges.Response(exchanges: enriched)
-                    self.presenter?.presentExchanges(response: response)
+                    self.exchanges = enriched
+                    self.presenter?.presentExchanges(
+                        response: .init(exchanges: enriched)
+                    )
                 }
 
             case .failure(let error):
-                let response = Exchanges.Error.Response(message: error.localizedDescription)
-                self.presenter?.presentError(response: response)
+                self.presenter?.presentError(
+                    response: .init(message: error.localizedDescription)
+                )
             }
         }
     }
-    
+
     func selectExchange(request: Exchanges.SelectExchange.Request) -> ExchangeListing? {
         guard request.index < exchanges.count else { return nil }
         return exchanges[request.index]

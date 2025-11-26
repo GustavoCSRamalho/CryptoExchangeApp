@@ -5,6 +5,7 @@ enum ExchangesListFactory {
         let viewController = ExchangesListViewController()
         let interactor = ExchangesListInteractor()
         let presenter = ExchangesListPresenter()
+        let executor = AsyncExecutor()
         
         let network: NetworkServiceProtocol
         if UITestingHelper.isUITesting {
@@ -43,6 +44,7 @@ enum ExchangesListFactory {
         viewController.router = router
         interactor.presenter = presenter
         interactor.worker = worker
+        interactor.executor = executor
         presenter.viewController = viewController
         router.viewController = viewController
         

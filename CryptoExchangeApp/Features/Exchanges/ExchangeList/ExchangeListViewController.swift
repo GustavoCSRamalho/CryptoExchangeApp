@@ -56,9 +56,7 @@ final class ExchangesListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        Task {
-            await fetchExchanges()
-        }
+        fetchExchanges()
     }
     
     private func setupView() {
@@ -73,9 +71,8 @@ final class ExchangesListViewController: UIViewController {
         tableView.refreshControl = refreshControl
         
         errorView.onRetry = { [weak self] in
-            Task { [weak self] in
-                await self?.fetchExchanges()
-            }
+
+            self?.fetchExchanges()
         }
         
         errorView.onCancel = { [weak self] in
@@ -101,17 +98,17 @@ final class ExchangesListViewController: UIViewController {
         }
     }
     
-    private func fetchExchanges() async {
+    private func fetchExchanges() {
         if !refreshControl.isRefreshing {
             loadingIndicator.startAnimating()
         }
         
         let request = Exchanges.FetchExchanges.Request()
-        await interactor?.fetchExchanges(request: request)
+        interactor?.fetchExchanges(request: request)
     }
     
-    @objc private func handleRefresh() async {
-        await fetchExchanges()
+    @objc private func handleRefresh() {
+        fetchExchanges()
     }
 }
 
