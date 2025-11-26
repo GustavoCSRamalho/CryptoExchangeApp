@@ -10,8 +10,8 @@ protocol NetworkServiceProtocol {
 }
 
 final class NetworkService: NetworkServiceProtocol {
-    private let baseURL = "https://pro-api.coinmarketcap.com/v1"
-    private let apiKey = "e51fac2edb984145a787759b7d79a4fe"
+    private let baseURL = APIConstants.baseURL
+    private let apiKey = APIConstants.apiKey
     
     func request<T: Decodable>(
         endpoint: String,

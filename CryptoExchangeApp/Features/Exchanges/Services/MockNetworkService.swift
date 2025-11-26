@@ -18,10 +18,12 @@ final class MockNetworkService: NetworkServiceProtocol {
             
             let mockData: Data
             
-            if endpoint.contains("/cryptocurrency/listings/latest") {
-                mockData = self.createMockCryptocurrencyListResponse()
+            if endpoint.contains("/exchange/listings/latest") {
+                mockData = self.createMockExchangeListingsResponse()
             } else if endpoint.contains("/exchange/info") {
                 mockData = self.createMockExchangeInfoResponse()
+            } else if endpoint.contains("/exchange/assets") {
+                mockData = self.createMockExchangeAssetsResponse()
             } else {
                 completion(.failure(.invalidURL))
                 return
@@ -37,105 +39,39 @@ final class MockNetworkService: NetworkServiceProtocol {
         }
     }
     
-    private func createMockCryptocurrencyListResponse() -> Data {
+    private func createMockExchangeListingsResponse() -> Data {
         let json = """
         {
             "data": [
                 {
-                    "id": 1,
-                    "name": "Bitcoin",
-                    "symbol": "BTC",
-                    "slug": "bitcoin",
-                    "cmc_rank": 1,
-                    "num_market_pairs": 10000,
-                    "circulating_supply": 19500000,
-                    "total_supply": 19500000,
-                    "max_supply": 21000000,
-                    "infinite_supply": false,
-                    "last_updated": "2024-01-01T00:00:00.000Z",
-                    "date_added": "2013-04-28T00:00:00.000Z",
-                    "tags": ["mineable", "pow"],
-                    "platform": null,
-                    "quote": {
-                        "USD": {
-                            "price": 50000.00,
-                            "volume_24h": 30000000000,
-                            "volume_change_24h": 5.2,
-                            "percent_change_1h": 0.5,
-                            "percent_change_24h": 2.3,
-                            "percent_change_7d": 10.5,
-                            "market_cap": 975000000000,
-                            "market_cap_dominance": 45.0,
-                            "fully_diluted_market_cap": 1050000000000,
-                            "last_updated": "2024-01-01T00:00:00.000Z"
-                        }
-                    }
+                    "id": 270,
+                    "name": "Binance",
+                    "slug": "binance",
+                    "num_market_pairs": 2000,
+                    "spot_volume_usd": 15000000000.0,
+                    "date_launched": "2017-07-14T00:00:00.000Z"
                 },
                 {
-                    "id": 1027,
-                    "name": "Ethereum",
-                    "symbol": "ETH",
-                    "slug": "ethereum",
-                    "cmc_rank": 2,
-                    "num_market_pairs": 8000,
-                    "circulating_supply": 120000000,
-                    "total_supply": 120000000,
-                    "max_supply": null,
-                    "infinite_supply": true,
-                    "last_updated": "2024-01-01T00:00:00.000Z",
-                    "date_added": "2015-08-07T00:00:00.000Z",
-                    "tags": ["smart-contracts"],
-                    "platform": null,
-                    "quote": {
-                        "USD": {
-                            "price": 3000.00,
-                            "volume_24h": 15000000000,
-                            "volume_change_24h": 3.1,
-                            "percent_change_1h": 0.2,
-                            "percent_change_24h": 1.5,
-                            "percent_change_7d": 8.2,
-                            "market_cap": 360000000000,
-                            "market_cap_dominance": 18.0,
-                            "fully_diluted_market_cap": 360000000000,
-                            "last_updated": "2024-01-01T00:00:00.000Z"
-                        }
-                    }
+                    "id": 102,
+                    "name": "Coinbase Exchange",
+                    "slug": "coinbase-exchange",
+                    "num_market_pairs": 500,
+                    "spot_volume_usd": 2500000000.0,
+                    "date_launched": "2015-01-20T00:00:00.000Z"
                 },
                 {
-                    "id": 825,
-                    "name": "Tether",
-                    "symbol": "USDT",
-                    "slug": "tether",
-                    "cmc_rank": 3,
-                    "num_market_pairs": 12000,
-                    "circulating_supply": 90000000000,
-                    "total_supply": 90000000000,
-                    "max_supply": null,
-                    "infinite_supply": true,
-                    "last_updated": "2024-01-01T00:00:00.000Z",
-                    "date_added": "2015-02-25T00:00:00.000Z",
-                    "tags": ["stablecoin"],
-                    "platform": null,
-                    "quote": {
-                        "USD": {
-                            "price": 1.00,
-                            "volume_24h": 50000000000,
-                            "volume_change_24h": 0.5,
-                            "percent_change_1h": 0.01,
-                            "percent_change_24h": 0.02,
-                            "percent_change_7d": 0.05,
-                            "market_cap": 90000000000,
-                            "market_cap_dominance": 5.0,
-                            "fully_diluted_market_cap": 90000000000,
-                            "last_updated": "2024-01-01T00:00:00.000Z"
-                        }
-                    }
+                    "id": 311,
+                    "name": "Kraken",
+                    "slug": "kraken",
+                    "num_market_pairs": 800,
+                    "spot_volume_usd": 1200000000.0,
+                    "date_launched": "2013-09-10T00:00:00.000Z"
                 }
             ],
             "status": {
                 "timestamp": "2024-01-01T00:00:00.000Z",
                 "error_code": 0,
-                "error_message": "",
+                "error_message": null,
                 "elapsed": 10,
                 "credit_count": 1
             }
@@ -148,8 +84,8 @@ final class MockNetworkService: NetworkServiceProtocol {
         let json = """
         {
             "data": {
-                "1": {
-                    "id": 1,
+                "270": {
+                    "id": 270,
                     "name": "Binance",
                     "slug": "binance",
                     "logo": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png",
@@ -177,7 +113,69 @@ final class MockNetworkService: NetworkServiceProtocol {
             "status": {
                 "timestamp": "2024-01-01T00:00:00.000Z",
                 "error_code": 0,
-                "error_message": "",
+                "error_message": null,
+                "elapsed": 10,
+                "credit_count": 1
+            }
+        }
+        """
+        return json.data(using: .utf8)!
+    }
+    
+    private func createMockExchangeAssetsResponse() -> Data {
+        let json = """
+        {
+            "data": [
+                {
+                    "wallet_address": "0x5a52e96bacdabb82fd05763e25335261b270efcb",
+                    "balance": 45000000,
+                    "platform": {
+                        "crypto_id": 1027,
+                        "symbol": "ETH",
+                        "name": "Ethereum"
+                    },
+                    "currency": {
+                        "crypto_id": 5117,
+                        "price_usd": 0.10241799413549,
+                        "symbol": "OGN",
+                        "name": "Origin Protocol"
+                    }
+                },
+                {
+                    "wallet_address": "0xf977814e90da44bfa03b6295a0616a897441acec",
+                    "balance": 400000000,
+                    "platform": {
+                        "crypto_id": 1027,
+                        "symbol": "ETH",
+                        "name": "Ethereum"
+                    },
+                    "currency": {
+                        "crypto_id": 5824,
+                        "price_usd": 0.00251174724338,
+                        "symbol": "SLP",
+                        "name": "Smooth Love Potion"
+                    }
+                },
+                {
+                    "wallet_address": "0x5a52e96bacdabb82fd05763e25335261b270efcb",
+                    "balance": 5588175,
+                    "platform": {
+                        "crypto_id": 1027,
+                        "symbol": "ETH",
+                        "name": "Ethereum"
+                    },
+                    "currency": {
+                        "crypto_id": 3928,
+                        "price_usd": 0.04813245442357,
+                        "symbol": "IDEX",
+                        "name": "IDEX"
+                    }
+                }
+            ],
+            "status": {
+                "timestamp": "2024-01-01T00:00:00.000Z",
+                "error_code": 0,
+                "error_message": null,
                 "elapsed": 10,
                 "credit_count": 1
             }
