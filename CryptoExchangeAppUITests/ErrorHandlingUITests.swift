@@ -10,6 +10,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testUnauthorizedError() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",
@@ -31,6 +35,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testForbiddenError() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",
@@ -52,6 +60,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testRateLimitError() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",
@@ -76,6 +88,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testServerError() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",
@@ -100,6 +116,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testBadRequestError() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",
@@ -124,6 +144,10 @@ final class ErrorHandlingUITests: XCTestCase {
     func testErrorIconDisplay() throws {
         // Given
         app = XCUIApplication()
+        app.launchArguments = [
+            "-AppleLanguages", "(en)",
+            "-AppleLocale", "en_US"
+        ]
         app.launchEnvironment = [
             "UI_TESTING": "1",
             "MOCK_ERROR": "1",

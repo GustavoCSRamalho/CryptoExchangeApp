@@ -1,6 +1,6 @@
 import XCTest
 
-final class CryptoExchangeAppUITests: XCTestCase {
+final class ExchangeAppUITests: XCTestCase {
     var app: XCUIApplication!
     
     override func setUpWithError() throws {
@@ -12,8 +12,8 @@ final class CryptoExchangeAppUITests: XCTestCase {
             "-AppleLocale", "en_US"
         ]
         
-        app.launchEnvironment = ["MOCK_SUCCESS": "1"]
-        app.launchEnvironment = ["UI_TESTING": "1"]
+        app.launchEnvironment = ["UI_TESTING": "1", "MOCK_SUCCESS": "1"]
+        
         
         app.launch()
     }
