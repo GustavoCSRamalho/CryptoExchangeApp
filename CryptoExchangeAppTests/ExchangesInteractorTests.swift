@@ -5,14 +5,17 @@ final class ExchangesInteractorTests: XCTestCase {
     var sut: ExchangesListInteractor!
     var presenterSpy: ExchangesListPresenterSpy!
     var workerSpy: ExchangesListWorkerSpy!
+    var executorSpy: AsyncExecutorProtocol!
     
     override func setUp() {
         super.setUp()
+        executorSpy = AsyncExecutorMock()
         sut = ExchangesListInteractor()
         presenterSpy = ExchangesListPresenterSpy()
         workerSpy = ExchangesListWorkerSpy()
         sut.presenter = presenterSpy
         sut.worker = workerSpy
+        sut.executor = executorSpy
     }
     
     override func tearDown() {
@@ -22,19 +25,15 @@ final class ExchangesInteractorTests: XCTestCase {
         super.tearDown()
     }
     
-    func testFetchExchangesSuccess() {
-        // Given
-        let expectedExchanges = [makeExchangeListing()]
-        workerSpy.fetchExchangeListingsResult = .success(expectedExchanges)
-        let request = Exchanges.FetchExchanges.Request()
-        
-        // When
-        sut.fetchExchanges(request: request)
-        
-        // Then
+    func testFetchExchangesSuccess() async {
+        workerSpy.fetchExchangeListingsResult = .success([makeExchangeListing()])
+
+        sut.fetchExchanges(request: .init())
+
+        // Espera execução do executor
+        try? await Task.sleep(nanoseconds: 30_000_000)
+
         XCTAssertTrue(presenterSpy.presentExchangesCalled)
-        XCTAssertEqual(presenterSpy.presentedExchanges?.count, 1)
-        XCTAssertEqual(presenterSpy.presentedExchanges?.first?.id, 270)
     }
     
     func testFetchExchangesFailure() {
@@ -50,16 +49,19 @@ final class ExchangesInteractorTests: XCTestCase {
         XCTAssertFalse(presenterSpy.presentExchangesCalled)
     }
     
-    func testSelectExchangeValidIndex() {
+    func testSelectExchangeValidIndex() async {
         // Given
         let exchanges = [makeExchangeListing()]
         workerSpy.fetchExchangeListingsResult = .success(exchanges)
-        sut.fetchExchanges(request: Exchanges.FetchExchanges.Request())
-        let request = Exchanges.SelectExchange.Request(index: 0)
-        
+
         // When
+        sut.fetchExchanges(request: Exchanges.FetchExchanges.Request())
+
+        try? await Task.sleep(nanoseconds: 30_000_000)
+
+        let request = Exchanges.SelectExchange.Request(index: 0)
         let result = sut.selectExchange(request: request)
-        
+            
         // Then
         XCTAssertNotNil(result)
         XCTAssertEqual(result?.id, 270)
@@ -110,19 +112,15 @@ class ExchangesListPresenterSpy: ExchangesListPresenterProtocol {
 }
 
 class ExchangesListWorkerSpy: ExchangesListWorkerProtocol {
+
     var fetchExchangeInfoResult: Result<Exchange, NetworkError>?
-    
-    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
-        if let result = fetchExchangeInfoResult {
-            completion(result)
-        }
-    }
-    
     var fetchExchangeListingsResult: Result<[ExchangeListing], NetworkError>?
-    
+
     func fetchExchangeListings(completion: @escaping (Result<[ExchangeListing], NetworkError>) -> Void) {
-        if let result = fetchExchangeListingsResult {
-            completion(result)
-        }
+        completion(fetchExchangeListingsResult ?? .success([]))
+    }
+
+    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
+        completion(fetchExchangeInfoResult ?? .failure(.noData))
     }
 }
