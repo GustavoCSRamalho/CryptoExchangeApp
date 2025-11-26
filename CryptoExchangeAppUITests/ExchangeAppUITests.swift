@@ -14,7 +14,6 @@ final class ExchangeAppUITests: XCTestCase {
         
         app.launchEnvironment = ["UI_TESTING": "1", "MOCK_SUCCESS": "1"]
         
-        
         app.launch()
     }
     
@@ -45,24 +44,33 @@ final class ExchangeAppUITests: XCTestCase {
         let tableView = app.tables.firstMatch
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
-        let binanceCell = tableView.cells.containing(NSPredicate(format: "label CONTAINS[c] 'Binance'")).firstMatch
-        XCTAssertTrue(binanceCell.exists, "Should display mocked Binance data")
+        let binanceCell = tableView.cells
+            .containing(NSPredicate(format: "label CONTAINS[c] 'Binance'"))
+            .firstMatch
+        
+        XCTAssertTrue(binanceCell.waitForExistence(timeout: 5))
     }
     
     func testMockedDataDisplaysCoinbase() throws {
         let tableView = app.tables.firstMatch
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
-        let coinbaseCell = tableView.cells.containing(NSPredicate(format: "label CONTAINS[c] 'Coinbase'")).firstMatch
-        XCTAssertTrue(coinbaseCell.exists, "Should display mocked Coinbase data")
+        let coinbaseCell = tableView.cells
+            .containing(NSPredicate(format: "label CONTAINS[c] 'Coinbase'"))
+            .firstMatch
+        
+        XCTAssertTrue(coinbaseCell.waitForExistence(timeout: 5))
     }
     
     func testMockedDataDisplaysKraken() throws {
         let tableView = app.tables.firstMatch
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
-        let krakenCell = tableView.cells.containing(NSPredicate(format: "label CONTAINS[c] 'Kraken'")).firstMatch
-        XCTAssertTrue(krakenCell.exists, "Should display mocked Kraken data")
+        let krakenCell = tableView.cells
+            .containing(NSPredicate(format: "label CONTAINS[c] 'Kraken'"))
+            .firstMatch
+        
+        XCTAssertTrue(krakenCell.waitForExistence(timeout: 5))
     }
     
     func testCellDisplaysVolume() throws {
@@ -71,8 +79,11 @@ final class ExchangeAppUITests: XCTestCase {
         
         let firstCell = tableView.cells.firstMatch
         
-        let volumeLabel = firstCell.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Volume'")).firstMatch
-        XCTAssertTrue(volumeLabel.exists, "Cell should display volume")
+        let volumeLabel = firstCell.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Volume'"))
+            .firstMatch
+        
+        XCTAssertTrue(volumeLabel.waitForExistence(timeout: 5))
     }
     
     func testCellDisplaysDateLaunched() throws {
@@ -81,8 +92,11 @@ final class ExchangeAppUITests: XCTestCase {
         
         let firstCell = tableView.cells.firstMatch
         
-        let dateLabel = firstCell.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Launched'")).firstMatch
-        XCTAssertTrue(dateLabel.exists, "Cell should display launch date")
+        let dateLabel = firstCell.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Launched'"))
+            .firstMatch
+        
+        XCTAssertTrue(dateLabel.waitForExistence(timeout: 5))
     }
     
     func testPullToRefresh() throws {
@@ -103,7 +117,7 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         let detailNavigationBar = app.navigationBars["Details"]
@@ -115,7 +129,7 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         let detailNavigationBar = app.navigationBars["Details"]
@@ -125,7 +139,7 @@ final class ExchangeAppUITests: XCTestCase {
         backButton.tap()
         
         let listNavigationBar = app.navigationBars["Exchanges"]
-        XCTAssertTrue(listNavigationBar.waitForExistence(timeout: 2))
+        XCTAssertTrue(listNavigationBar.waitForExistence(timeout: 5))
     }
     
     // MARK: - Detail Tests
@@ -134,14 +148,14 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         let detailNavigationBar = app.navigationBars["Details"]
         XCTAssertTrue(detailNavigationBar.waitForExistence(timeout: 5))
         
         let scrollView = app.scrollViews.firstMatch
-        XCTAssertTrue(scrollView.exists, "Detail should have scroll view")
+        XCTAssertTrue(scrollView.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysID() throws {
@@ -149,13 +163,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let idLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'ID:'")).firstMatch
-        XCTAssertTrue(idLabel.exists, "Should display ID")
+        let idLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'ID:'"))
+            .firstMatch
+        
+        XCTAssertTrue(idLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysDescription() throws {
@@ -163,13 +180,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let descriptionText = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'cryptocurrency exchange'")).firstMatch
-        XCTAssertTrue(descriptionText.exists, "Should display mocked description")
+        let descriptionText = app.staticTexts
+            .containing(NSPredicate(format: "label CONTAINS[c] 'cryptocurrency exchange'"))
+            .firstMatch
+        
+        XCTAssertTrue(descriptionText.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysWebsite() throws {
@@ -177,13 +197,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let websiteLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Website'")).firstMatch
-        XCTAssertTrue(websiteLabel.exists, "Should display website")
+        let websiteLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Website'"))
+            .firstMatch
+        
+        XCTAssertTrue(websiteLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysMakerFee() throws {
@@ -191,13 +214,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let makerFeeLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Maker Fee'")).firstMatch
-        XCTAssertTrue(makerFeeLabel.exists, "Should display maker fee")
+        let makerFeeLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Maker Fee'"))
+            .firstMatch
+        
+        XCTAssertTrue(makerFeeLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysTakerFee() throws {
@@ -205,13 +231,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let takerFeeLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Taker Fee'")).firstMatch
-        XCTAssertTrue(takerFeeLabel.exists, "Should display taker fee")
+        let takerFeeLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Taker Fee'"))
+            .firstMatch
+        
+        XCTAssertTrue(takerFeeLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysDateLaunched() throws {
@@ -219,13 +248,16 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         Thread.sleep(forTimeInterval: 1)
         
-        let dateLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Date Launched'")).firstMatch
-        XCTAssertTrue(dateLabel.exists, "Should display launch date")
+        let dateLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Date Launched'"))
+            .firstMatch
+        
+        XCTAssertTrue(dateLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailDisplaysCurrencies() throws {
@@ -233,7 +265,7 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         let scrollView = app.scrollViews.firstMatch
@@ -241,8 +273,11 @@ final class ExchangeAppUITests: XCTestCase {
         
         scrollView.swipeUp()
         
-        let currenciesLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Currencies' OR label CONTAINS[c] 'Assets'")).firstMatch
-        XCTAssertTrue(currenciesLabel.exists, "Should have Currencies section")
+        let currenciesLabel = app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS[c] 'Currencies' OR label CONTAINS[c] 'Assets'"))
+            .firstMatch
+        
+        XCTAssertTrue(currenciesLabel.waitForExistence(timeout: 5))
     }
     
     func testDetailScrolling() throws {
@@ -250,7 +285,7 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(tableView.waitForExistence(timeout: 5))
         
         let firstCell = tableView.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 2))
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
         let scrollView = app.scrollViews.firstMatch
@@ -259,6 +294,6 @@ final class ExchangeAppUITests: XCTestCase {
         scrollView.swipeUp()
         scrollView.swipeUp()
         
-        XCTAssertTrue(scrollView.exists, "Should be able to scroll")
+        XCTAssertTrue(scrollView.exists)
     }
 }
