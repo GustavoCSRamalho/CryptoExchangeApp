@@ -9,17 +9,25 @@ final class ExchangeDetailInteractor: ExchangeDetailInteractorProtocol {
     var worker: ExchangeDetailWorkerProtocol?
     
     func fetchDetail(request: ExchangeDetail.FetchDetail.Request) {
-        let cryptocurrency = request.cryptocurrency
-        let cryptoId = "\(cryptocurrency.id)"
+        let exchangeId = request.exchangeId
         
-        worker?.fetchExchangeInfo(id: cryptoId) { [weak self] result in
-            switch result {
+        worker?.fetchExchangeInfo(id: exchangeId) { [weak self] infoResult in
+            switch infoResult {
             case .success(let exchange):
-                let response = ExchangeDetail.FetchDetail.Response(
-                    exchange: exchange,
-                    cryptocurrency: cryptocurrency
-                )
-                self?.presenter?.presentDetail(response: response)
+                self?.worker?.fetchExchangeAssets(id: exchangeId) { assetsResult in
+                    switch assetsResult {
+                    case .success(let assets):
+                        let response = ExchangeDetail.FetchDetail.Response(
+                            exchange: exchange,
+                            assets: assets
+                        )
+                        self?.presenter?.presentDetail(response: response)
+                        
+                    case .failure(let error):
+                        let response = ExchangeDetail.Error.Response(message: error.localizedDescription)
+                        self?.presenter?.presentError(response: response)
+                    }
+                }
                 
             case .failure(let error):
                 let response = ExchangeDetail.Error.Response(message: error.localizedDescription)

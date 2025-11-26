@@ -8,7 +8,7 @@ protocol ExchangeDetailDisplayLogic: AnyObject {
 
 final class ExchangeDetailViewController: UIViewController {
     var interactor: ExchangeDetailInteractorProtocol?
-    private var cryptocurrency: Cryptocurrency
+    private var exchangeId: Int
     
     private var viewModel: ExchangeDetail.FetchDetail.ViewModel?
     
@@ -19,10 +19,10 @@ final class ExchangeDetailViewController: UIViewController {
         return view
     }()
     
-    init(cryptocurrency: Cryptocurrency) {
-            self.cryptocurrency = cryptocurrency
-            super.init(nibName: nil, bundle: nil)
-        }
+    init(exchangeId: Int) {
+        self.exchangeId = exchangeId
+        super.init(nibName: nil, bundle: nil)
+    }
     
     private lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
@@ -120,7 +120,7 @@ final class ExchangeDetailViewController: UIViewController {
         table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
-        table.register(CurrencyTableViewCell.self, forCellReuseIdentifier: CurrencyTableViewCell.identifier)
+        table.register(ExchangeDetailsTableViewCell.self, forCellReuseIdentifier: ExchangeDetailsTableViewCell.identifier)
         table.rowHeight = 60
         table.separatorColor = DesignSystem.Colors.separator
         table.backgroundColor = DesignSystem.Colors.cardBackground
@@ -176,8 +176,6 @@ final class ExchangeDetailViewController: UIViewController {
             self?.navigationController?.popViewController(animated: true)
         }
         
-        
-        
         currenciesTableHeightConstraint = currenciesTableView.heightAnchor.constraint(equalToConstant: 0)
         currenciesTableHeightConstraint?.isActive = true
         
@@ -186,6 +184,7 @@ final class ExchangeDetailViewController: UIViewController {
             errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -244,7 +243,7 @@ final class ExchangeDetailViewController: UIViewController {
     
     private func fetchDetail() {
         loadingIndicator.startAnimating()
-        let request = ExchangeDetail.FetchDetail.Request(cryptocurrency: cryptocurrency)
+        let request = ExchangeDetail.FetchDetail.Request(exchangeId: exchangeId)
         interactor?.fetchDetail(request: request)
     }
     
@@ -300,9 +299,13 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             self.descriptionLabel.text = viewModel.description
             
             if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
-                self.logoImageView.kf.setImage(with: url, placeholder: UIImage(systemName: "bitcoinsign.circle.fill"))
+                self.logoImageView.kf.setImage(
+                    with: url,
+                    placeholder: UIImage(systemName: "building.columns.fill")
+                )
             } else {
-                self.logoImageView.image = UIImage(systemName: "bitcoinsign.circle.fill")
+                self.logoImageView.image = UIImage(systemName: "building.columns.fill")
+                self.logoImageView.tintColor = DesignSystem.Colors.textSecondary
             }
             
             self.infoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
@@ -354,9 +357,9 @@ extension ExchangeDetailViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: CurrencyTableViewCell.identifier,
+            withIdentifier: ExchangeDetailsTableViewCell.identifier,
             for: indexPath
-        ) as? CurrencyTableViewCell,
+        ) as? ExchangeDetailsTableViewCell,
               let currency = viewModel?.currencies[indexPath.row] else {
             return UITableViewCell()
         }

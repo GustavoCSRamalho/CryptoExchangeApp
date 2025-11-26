@@ -1,8 +1,8 @@
 import UIKit
 
 enum ExchangeDetailFactory {
-    static func make(cryptocurrency: Cryptocurrency) -> UIViewController {
-        let viewController = ExchangeDetailViewController(cryptocurrency: cryptocurrency)
+    static func make(exchange: ExchangeListing) -> UIViewController {
+        let viewController = ExchangeDetailViewController(exchangeId: exchange.id)
         let interactor = ExchangeDetailInteractor()
         let presenter = ExchangeDetailPresenter()
         
