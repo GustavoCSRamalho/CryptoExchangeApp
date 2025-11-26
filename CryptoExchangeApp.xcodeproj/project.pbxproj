@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C2CB3892ED759B8006FEA76 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0C2CB3882ED759B8006FEA76 /* SnapKit */; };
 		0C2CB3942ED77DA4006FEA76 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0C2CB3932ED77DA4006FEA76 /* README.md */; };
+		0C2CB3962ED78462006FEA76 /* release.sh in Resources */ = {isa = PBXBuildFile; fileRef = 0C2CB3952ED78460006FEA76 /* release.sh */; };
 		0C5F27A22ED51D2E001CE5FF /* .gitignore in Sources */ = {isa = PBXBuildFile; fileRef = 0C5F27A12ED51D29001CE5FF /* .gitignore */; };
 		0CFF7B662ED5DE8E00BA22EA /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 0CFF7B652ED5DE8E00BA22EA /* Alamofire */; };
 		0CFF7B692ED5DEA100BA22EA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0CFF7B682ED5DEA100BA22EA /* Kingfisher */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		0C2CB3932ED77DA4006FEA76 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		0C2CB3952ED78460006FEA76 /* release.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = release.sh; sourceTree = "<group>"; };
 		0C5F27762ED51B68001CE5FF /* CryptoExchangeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoExchangeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C5F27842ED51B6B001CE5FF /* CryptoExchangeAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoExchangeAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C5F278E2ED51B6B001CE5FF /* CryptoExchangeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CryptoExchangeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +126,7 @@
 		0C5F276D2ED51B68001CE5FF = {
 			isa = PBXGroup;
 			children = (
+				0C2CB3952ED78460006FEA76 /* release.sh */,
 				0C2CB3932ED77DA4006FEA76 /* README.md */,
 				0CFF7BE62ED6359600BA22EA /* CryptoExchangeApp.xctestplan */,
 				0C5F27DD2ED52100001CE5FF /* Info.plist */,
@@ -274,6 +277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C2CB3942ED77DA4006FEA76 /* README.md in Resources */,
+				0C2CB3962ED78462006FEA76 /* release.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

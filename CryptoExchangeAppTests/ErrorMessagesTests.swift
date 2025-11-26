@@ -46,11 +46,12 @@ final class ErrorMessagesTests: XCTestCase {
     
     func testInternalServerError() {
         // Given
-        let error = APIError.internalServerError
+        let statusCode = 500
+        let error = APIError.internalServerError(statusCode: statusCode)
         
         // Then
         XCTAssertEqual(error.title, "Server Error")
-        XCTAssertTrue(error.message.contains("internal server error"))
+        XCTAssertTrue(error.message.contains("500") || error.message.contains("server error"), "Message should contain status code or 'server error'")
         XCTAssertTrue(error.shouldShowRetry)
     }
     

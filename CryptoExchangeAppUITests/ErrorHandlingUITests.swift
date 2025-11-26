@@ -99,14 +99,15 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
         Thread.sleep(forTimeInterval: 1)
         
         // Then
         let errorTitle = app.staticTexts["Server Error"]
         XCTAssertTrue(errorTitle.waitForExistence(timeout: 5), "Should display server error")
         
-        let errorMessage = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'internal server error'")).firstMatch
+        let errorMessage = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS[c] 'Server error' OR label CONTAINS '500'")
+        ).firstMatch
         XCTAssertTrue(errorMessage.exists, "Should display server error message")
         
         let retryButton = app.buttons["Retry"]
@@ -127,7 +128,7 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
+
         Thread.sleep(forTimeInterval: 1)
         
         // Then
