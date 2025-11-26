@@ -132,16 +132,11 @@ final class ExchangeDetailViewController: UIViewController {
     }
     
     
-    // MARK: - View Lifecycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         fetchDetail()
     }
-    
-    
-    // MARK: - Setup
     
     private func setupView() {
         title = L10n.Detail.title
@@ -313,9 +308,20 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             
             if let logoURL = viewModel.logoURL,
                let url = URL(string: logoURL) {
+                let processor = DownsamplingImageProcessor(size: CGSize(
+                    width: DesignSystem.ImageSize.logoMedium,
+                    height: DesignSystem.ImageSize.logoMedium
+                ))
+                
                 self.logoImageView.kf.setImage(
                     with: url,
-                    placeholder: UIImage(systemName: "building.columns.fill")
+                    placeholder: UIImage(systemName: "building.columns.fill"),
+                    options: [
+                        .processor(processor),
+                        .scaleFactor(UIScreen.main.scale),
+                        .transition(.fade(0.3)),
+                        .cacheOriginalImage
+                    ]
                 )
             } else {
                 self.logoImageView.image = UIImage(systemName: "building.columns.fill")
