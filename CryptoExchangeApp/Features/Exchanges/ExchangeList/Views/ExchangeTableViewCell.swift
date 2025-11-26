@@ -1,7 +1,7 @@
 import UIKit
 import Kingfisher
 
-final class ExchangeTableViewCell: UITableViewCell {
+final class ExchangesListTableViewCell: UITableViewCell {
     static let identifier = "ExchangeTableViewCell"
     
     private let logoImageView: UIImageView = {

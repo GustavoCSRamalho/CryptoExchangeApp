@@ -1,13 +1,13 @@
 import Foundation
 
-protocol ExchangesInteractorProtocol {
+protocol ExchangesListInteractorProtocol {
     func fetchExchanges(request: Exchanges.FetchExchanges.Request)
     func selectExchange(request: Exchanges.SelectExchange.Request) -> ExchangeListing?
 }
 
-final class ExchangesInteractor: ExchangesInteractorProtocol {
-    var presenter: ExchangesPresenterProtocol?
-    var worker: ExchangesWorkerProtocol?
+final class ExchangesListInteractor: ExchangesListInteractorProtocol {
+    var presenter: ExchangesListPresenterProtocol?
+    var worker: ExchangesListWorkerProtocol?
     
     private var exchanges: [ExchangeListing] = []
     

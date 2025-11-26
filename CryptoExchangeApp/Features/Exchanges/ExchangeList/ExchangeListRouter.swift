@@ -1,10 +1,10 @@
 import UIKit
 
-protocol ExchangesRouterProtocol {
+protocol ExchangesListRouterProtocol {
     func navigateToExchangeDetail(exchange: ExchangeListing)
 }
 
-final class ExchangesRouter: ExchangesRouterProtocol {
+final class ExchangesListRouter: ExchangesListRouterProtocol {
     weak var viewController: UIViewController?
     
     func navigateToExchangeDetail(exchange: ExchangeListing) {

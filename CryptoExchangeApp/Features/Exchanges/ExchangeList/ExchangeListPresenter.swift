@@ -1,12 +1,12 @@
 import Foundation
 
-protocol ExchangesPresenterProtocol {
+protocol ExchangesListPresenterProtocol {
     func presentExchanges(response: Exchanges.FetchExchanges.Response)
     func presentError(response: Exchanges.Error.Response)
 }
 
-final class ExchangesPresenter: ExchangesPresenterProtocol {
-    weak var viewController: ExchangesDisplayLogic?
+final class ExchangesListPresenter: ExchangesListPresenterProtocol {
+    weak var viewController: ExchangesListDisplayLogic?
     
     func presentExchanges(response: Exchanges.FetchExchanges.Response) {
         let exchangeViewModels = response.exchanges.map { ExchangeViewModel(exchange: $0) }
