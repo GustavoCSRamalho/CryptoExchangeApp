@@ -12,7 +12,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             setupForUITesting()
         }
         
-        let exchangesViewController = ExchangesFactory.make()
+        let exchangesViewController = ExchangesListFactory.make()
         let navigationController = UINavigationController(rootViewController: exchangesViewController)
         navigationController.navigationBar.prefersLargeTitles = true
         
