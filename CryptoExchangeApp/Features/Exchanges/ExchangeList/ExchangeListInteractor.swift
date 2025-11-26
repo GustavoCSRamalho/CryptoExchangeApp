@@ -8,35 +8,39 @@ protocol ExchangesListInteractorProtocol {
 final class ExchangesListInteractor: ExchangesListInteractorProtocol {
     var presenter: ExchangesListPresenterProtocol?
     var worker: ExchangesListWorkerProtocol?
+    var executor: AsyncExecutorProtocol?
     
     private var exchanges: [ExchangeListing] = []
     
+    
     func fetchExchanges(request: Exchanges.FetchExchanges.Request) {
         worker?.fetchExchangeListings { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let listings):
-                    Task {
-                        let enrichedListings = await self.fetchAllInfosInParallel(listings: listings)
-                        
-                        self.exchanges = enrichedListings
-                        let response = Exchanges.FetchExchanges.Response(exchanges: enrichedListings)
-                        self.presenter?.presentExchanges(response: response)
-                    }
-                    
-                case .failure(let error):
-                    let response = Exchanges.Error.Response(message: error.localizedDescription)
-                    self.presenter?.presentError(response: response)
+            guard let self else { return }
+            
+            switch result {
+            case .success(let listings):
+
+                self.executor?.run { [weak self] in
+                    guard let self else { return }
+
+                    let enriched = await self.fetchAllInfosInParallel(listings: listings)
+                    self.exchanges = enriched
+
+                    let response = Exchanges.FetchExchanges.Response(exchanges: enriched)
+                    self.presenter?.presentExchanges(response: response)
                 }
+
+            case .failure(let error):
+                let response = Exchanges.Error.Response(message: error.localizedDescription)
+                self.presenter?.presentError(response: response)
             }
+        }
     }
     
     func selectExchange(request: Exchanges.SelectExchange.Request) -> ExchangeListing? {
         guard request.index < exchanges.count else { return nil }
         return exchanges[request.index]
     }
-    
 }
 
 extension ExchangesListInteractor {
@@ -48,10 +52,16 @@ extension ExchangesListInteractor {
             for item in listings {
                 group.addTask {
                     let info = await self.safeFetchInfo(id: item.id)
-                    
-                    var enriched = ExchangeListing(id: item.id, name: item.name, slug: item.slug, logo: info?.logo ?? item.logo, numMarketPairs: item.numMarketPairs, spotVolumeUsd: item.spotVolumeUsd, dateLaunched: item.dateLaunched)
-                    
-                    return enriched
+
+                    return ExchangeListing(
+                        id: item.id,
+                        name: item.name,
+                        slug: item.slug,
+                        logo: info?.logo ?? item.logo,
+                        numMarketPairs: item.numMarketPairs,
+                        spotVolumeUsd: item.spotVolumeUsd,
+                        dateLaunched: item.dateLaunched
+                    )
                 }
             }
             
