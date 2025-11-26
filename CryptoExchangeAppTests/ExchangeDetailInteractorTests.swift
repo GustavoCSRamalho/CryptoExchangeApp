@@ -24,10 +24,11 @@ final class ExchangeDetailInteractorTests: XCTestCase {
     
     func testFetchDetailSuccess() {
         // Given
-        let cryptocurrency = makeCryptocurrency()
         let exchange = makeExchange()
+        let assets = makeExchangeAssets()
         workerSpy.fetchExchangeInfoResult = .success(exchange)
-        let request = ExchangeDetail.FetchDetail.Request(cryptocurrency: cryptocurrency)
+        workerSpy.fetchExchangeAssetsResult = .success(assets)
+        let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
         // When
         sut.fetchDetail(request: request)
@@ -35,13 +36,28 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         // Then
         XCTAssertTrue(presenterSpy.presentDetailCalled)
         XCTAssertEqual(presenterSpy.presentedExchange?.name, "Binance")
+        XCTAssertEqual(presenterSpy.presentedAssets?.count, 2)
     }
     
-    func testFetchDetailFailure() {
+    func testFetchDetailInfoFailure() {
         // Given
-        let cryptocurrency = makeCryptocurrency()
         workerSpy.fetchExchangeInfoResult = .failure(.noData)
-        let request = ExchangeDetail.FetchDetail.Request(cryptocurrency: cryptocurrency)
+        let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
+        
+        // When
+        sut.fetchDetail(request: request)
+        
+        // Then
+        XCTAssertTrue(presenterSpy.presentErrorCalled)
+        XCTAssertFalse(presenterSpy.presentDetailCalled)
+    }
+    
+    func testFetchDetailAssetsFailure() {
+        // Given
+        let exchange = makeExchange()
+        workerSpy.fetchExchangeInfoResult = .success(exchange)
+        workerSpy.fetchExchangeAssetsResult = .failure(.noData)
+        let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
         // When
         sut.fetchDetail(request: request)
@@ -52,26 +68,6 @@ final class ExchangeDetailInteractorTests: XCTestCase {
     }
     
     // MARK: - Helpers
-    private func makeCryptocurrency() -> Cryptocurrency {
-        return Cryptocurrency(
-            id: 1,
-            name: "Bitcoin",
-            symbol: "BTC",
-            slug: "bitcoin",
-            cmcRank: 1,
-            numMarketPairs: 500,
-            circulatingSupply: 19000000,
-            totalSupply: 19000000,
-            maxSupply: 21000000,
-            infiniteSupply: false,
-            lastUpdated: "2024-01-01T00:00:00.000Z",
-            dateAdded: "2013-04-28T00:00:00.000Z",
-            tags: ["mineable"],
-            platform: nil,
-            quote: nil
-        )
-    }
-    
     private func makeExchange() -> Exchange {
         return Exchange(
             id: 270,
@@ -85,13 +81,30 @@ final class ExchangeDetailInteractorTests: XCTestCase {
             fiats: ["USD", "EUR"],
             tags: nil,
             type: "",
-            makerFee: 0.02,
-            takerFee: 0.04,
+            makerFee: 0.10,
+            takerFee: 0.10,
             weeklyVisits: 5123451,
             spotVolumeUsd: 66926283498.60113,
             spotVolumeLastUpdated: "2021-05-06T01:20:15.451Z",
             urls: ExchangeURLs(website: ["https://binance.com"], twitter: nil, blog: nil, chat: nil, fee: nil)
         )
+    }
+    
+    private func makeExchangeAssets() -> [ExchangeAsset] {
+        return [
+            ExchangeAsset(
+                walletAddress: "0x5a52e96bacdabb82fd05763e25335261b270efcb",
+                balance: 45000000,
+                platform: AssetPlatform(cryptoId: 1027, symbol: "ETH", name: "Ethereum"),
+                currency: AssetCurrency(cryptoId: 5117, priceUsd: 0.10241799413549, symbol: "OGN", name: "Origin Protocol")
+            ),
+            ExchangeAsset(
+                walletAddress: "0xf977814e90da44bfa03b6295a0616a897441acec",
+                balance: 400000000,
+                platform: AssetPlatform(cryptoId: 1027, symbol: "ETH", name: "Ethereum"),
+                currency: AssetCurrency(cryptoId: 5824, priceUsd: 0.00251174724338, symbol: "SLP", name: "Smooth Love Potion")
+            )
+        ]
     }
 }
 
@@ -99,10 +112,12 @@ class ExchangeDetailPresenterSpy: ExchangeDetailPresenterProtocol {
     var presentDetailCalled = false
     var presentErrorCalled = false
     var presentedExchange: Exchange?
+    var presentedAssets: [ExchangeAsset]?
     
     func presentDetail(response: ExchangeDetail.FetchDetail.Response) {
         presentDetailCalled = true
         presentedExchange = response.exchange
+        presentedAssets = response.assets
     }
     
     func presentError(response: ExchangeDetail.Error.Response) {
@@ -112,9 +127,16 @@ class ExchangeDetailPresenterSpy: ExchangeDetailPresenterProtocol {
 
 class ExchangeDetailWorkerSpy: ExchangeDetailWorkerProtocol {
     var fetchExchangeInfoResult: Result<Exchange, NetworkError>?
+    var fetchExchangeAssetsResult: Result<[ExchangeAsset], NetworkError>?
     
-    func fetchExchangeInfo(id: String, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
+    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
         if let result = fetchExchangeInfoResult {
+            completion(result)
+        }
+    }
+    
+    func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void) {
+        if let result = fetchExchangeAssetsResult {
             completion(result)
         }
     }

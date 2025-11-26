@@ -24,8 +24,8 @@ final class ExchangesInteractorTests: XCTestCase {
     
     func testFetchExchangesSuccess() {
         // Given
-        let expectedCryptocurrencies = [makeCryptocurrency()]
-        workerSpy.fetchCryptocurrenciesResult = .success(expectedCryptocurrencies)
+        let expectedExchanges = [makeExchangeListing()]
+        workerSpy.fetchExchangeListingsResult = .success(expectedExchanges)
         let request = Exchanges.FetchExchanges.Request()
         
         // When
@@ -33,13 +33,13 @@ final class ExchangesInteractorTests: XCTestCase {
         
         // Then
         XCTAssertTrue(presenterSpy.presentExchangesCalled)
-        XCTAssertEqual(presenterSpy.presentedCryptocurrencies?.count, 1)
-        XCTAssertEqual(presenterSpy.presentedCryptocurrencies?.first?.id, 1)
+        XCTAssertEqual(presenterSpy.presentedExchanges?.count, 1)
+        XCTAssertEqual(presenterSpy.presentedExchanges?.first?.id, 270)
     }
     
     func testFetchExchangesFailure() {
         // Given
-        workerSpy.fetchCryptocurrenciesResult = .failure(.networkFailure(NSError(domain: "test", code: -1)))
+        workerSpy.fetchExchangeListingsResult = .failure(.networkFailure(NSError(domain: "test", code: -1)))
         let request = Exchanges.FetchExchanges.Request()
         
         // When
@@ -52,8 +52,8 @@ final class ExchangesInteractorTests: XCTestCase {
     
     func testSelectExchangeValidIndex() {
         // Given
-        let cryptocurrencies = [makeCryptocurrency()]
-        workerSpy.fetchCryptocurrenciesResult = .success(cryptocurrencies)
+        let exchanges = [makeExchangeListing()]
+        workerSpy.fetchExchangeListingsResult = .success(exchanges)
         sut.fetchExchanges(request: Exchanges.FetchExchanges.Request())
         let request = Exchanges.SelectExchange.Request(index: 0)
         
@@ -62,13 +62,13 @@ final class ExchangesInteractorTests: XCTestCase {
         
         // Then
         XCTAssertNotNil(result)
-        XCTAssertEqual(result?.id, 1)
+        XCTAssertEqual(result?.id, 270)
     }
     
     func testSelectExchangeInvalidIndex() {
         // Given
-        let cryptocurrencies = [makeCryptocurrency()]
-        workerSpy.fetchCryptocurrenciesResult = .success(cryptocurrencies)
+        let exchanges = [makeExchangeListing()]
+        workerSpy.fetchExchangeListingsResult = .success(exchanges)
         sut.fetchExchanges(request: Exchanges.FetchExchanges.Request())
         let request = Exchanges.SelectExchange.Request(index: 10)
         
@@ -80,23 +80,14 @@ final class ExchangesInteractorTests: XCTestCase {
     }
     
     // MARK: - Helpers
-    private func makeCryptocurrency() -> Cryptocurrency {
-        return Cryptocurrency(
-            id: 1,
-            name: "Bitcoin",
-            symbol: "BTC",
-            slug: "bitcoin",
-            cmcRank: 1,
-            numMarketPairs: 500,
-            circulatingSupply: 19000000,
-            totalSupply: 19000000,
-            maxSupply: 21000000,
-            infiniteSupply: false,
-            lastUpdated: "2024-01-01T00:00:00.000Z",
-            dateAdded: "2013-04-28T00:00:00.000Z",
-            tags: ["mineable"],
-            platform: nil,
-            quote: nil
+    private func makeExchangeListing() -> ExchangeListing {
+        return ExchangeListing(
+            id: 270,
+            name: "Binance",
+            slug: "binance",
+            numMarketPairs: 2000,
+            spotVolumeUsd: 15000000000.0,
+            dateLaunched: "2017-07-14T00:00:00.000Z"
         )
     }
 }
@@ -105,11 +96,11 @@ final class ExchangesInteractorTests: XCTestCase {
 class ExchangesPresenterSpy: ExchangesPresenterProtocol {
     var presentExchangesCalled = false
     var presentErrorCalled = false
-    var presentedCryptocurrencies: [Cryptocurrency]?
+    var presentedExchanges: [ExchangeListing]?
     
     func presentExchanges(response: Exchanges.FetchExchanges.Response) {
         presentExchangesCalled = true
-        presentedCryptocurrencies = response.cryptocurrencies
+        presentedExchanges = response.exchanges
     }
     
     func presentError(response: Exchanges.Error.Response) {
@@ -118,11 +109,19 @@ class ExchangesPresenterSpy: ExchangesPresenterProtocol {
 }
 
 class ExchangesWorkerSpy: ExchangesWorkerProtocol {
-    var fetchCryptocurrenciesResult: Result<[Cryptocurrency], NetworkError>?
+    var fetchExchangeListingsResult: Result<[ExchangeListing], NetworkError>?
     
-    func fetchCryptocurrencies(completion: @escaping (Result<[Cryptocurrency], NetworkError>) -> Void) {
-        if let result = fetchCryptocurrenciesResult {
+    func fetchExchangeListings(completion: @escaping (Result<[ExchangeListing], NetworkError>) -> Void) {
+        if let result = fetchExchangeListingsResult {
             completion(result)
         }
+    }
+    
+    func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
+        // Not used in list tests
+    }
+    
+    func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void) {
+        // Not used in list tests
     }
 }

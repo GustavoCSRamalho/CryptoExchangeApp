@@ -20,9 +20,9 @@ final class ExchangeDetailPresenterTests: XCTestCase {
     
     func testPresentDetail() {
         // Given
-        let cryptocurrency = makeCryptocurrency()
         let exchange = makeExchange()
-        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, cryptocurrency: cryptocurrency)
+        let assets = makeExchangeAssets()
+        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, assets: assets)
         
         // When
         sut.presentDetail(response: response)
@@ -30,8 +30,8 @@ final class ExchangeDetailPresenterTests: XCTestCase {
         // Then
         XCTAssertTrue(viewControllerSpy.displayDetailCalled)
         XCTAssertEqual(viewControllerSpy.displayedViewModel?.name, "Binance")
-        XCTAssertEqual(viewControllerSpy.displayedViewModel?.makerFee, "2.00%")
-        XCTAssertEqual(viewControllerSpy.displayedViewModel?.takerFee, "4.00%")
+        XCTAssertEqual(viewControllerSpy.displayedViewModel?.makerFee, "0.10%")
+        XCTAssertEqual(viewControllerSpy.displayedViewModel?.takerFee, "0.10%")
     }
     
     func testPresentError() {
@@ -48,9 +48,23 @@ final class ExchangeDetailPresenterTests: XCTestCase {
     
     func testPresentDetailWithCurrencies() {
         // Given
-        let cryptocurrency = makeCryptocurrencyWithQuote()
         let exchange = makeExchange()
-        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, cryptocurrency: cryptocurrency)
+        let assets = makeExchangeAssets()
+        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, assets: assets)
+        
+        // When
+        sut.presentDetail(response: response)
+        
+        // Then
+        XCTAssertTrue(viewControllerSpy.displayDetailCalled)
+        XCTAssertEqual(viewControllerSpy.displayedViewModel?.currencies.count, 2)
+        XCTAssertEqual(viewControllerSpy.displayedViewModel?.currencies.first?.name, "Origin Protocol")
+    }
+    
+    func testPresentDetailWithoutAssets() {
+        // Given
+        let exchange = makeExchange()
+        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, assets: [])
         
         // When
         sut.presentDetail(response: response)
@@ -60,64 +74,21 @@ final class ExchangeDetailPresenterTests: XCTestCase {
         XCTAssertGreaterThan(viewControllerSpy.displayedViewModel?.currencies.count ?? 0, 0)
     }
     
+    func testPresentDetailFormatsPrice() {
+        // Given
+        let exchange = makeExchange()
+        let assets = makeExchangeAssets()
+        let response = ExchangeDetail.FetchDetail.Response(exchange: exchange, assets: assets)
+        
+        // When
+        sut.presentDetail(response: response)
+        
+        // Then
+        XCTAssertTrue(viewControllerSpy.displayDetailCalled)
+        XCTAssertTrue(viewControllerSpy.displayedViewModel?.currencies.first?.priceUSD.contains("$") ?? false)
+    }
+    
     // MARK: - Helpers
-    private func makeCryptocurrency() -> Cryptocurrency {
-        return Cryptocurrency(
-            id: 1,
-            name: "Bitcoin",
-            symbol: "BTC",
-            slug: "bitcoin",
-            cmcRank: 1,
-            numMarketPairs: 500,
-            circulatingSupply: 19000000,
-            totalSupply: 19000000,
-            maxSupply: 21000000,
-            infiniteSupply: false,
-            lastUpdated: "2024-01-01T00:00:00.000Z",
-            dateAdded: "2013-04-28T00:00:00.000Z",
-            tags: ["mineable"],
-            platform: nil,
-            quote: nil
-        )
-    }
-    
-    private func makeCryptocurrencyWithQuote() -> Cryptocurrency {
-        let quoteData = QuoteData(
-            price: 50000,
-            volume24h: 1500000000,
-            volumeChange24h: 5.2,
-            percentChange1h: 0.5,
-            percentChange24h: 2.3,
-            percentChange7d: 10.5,
-            marketCap: 950000000000,
-            marketCapDominance: 45.0,
-            fullyDilutedMarketCap: 1050000000000,
-            lastUpdated: "2023-01-01T00:00:00.000Z"
-        )
-        
-        let quoteDictionary: [String: QuoteData] = ["USD": quoteData]
-        let jsonData = try! JSONEncoder().encode(quoteDictionary)
-        let quote = try! JSONDecoder().decode(Quote.self, from: jsonData)
-        
-        return Cryptocurrency(
-            id: 1,
-            name: "Bitcoin",
-            symbol: "BTC",
-            slug: "bitcoin",
-            cmcRank: 1,
-            numMarketPairs: 500,
-            circulatingSupply: 19000000,
-            totalSupply: 19000000,
-            maxSupply: 21000000,
-            infiniteSupply: false,
-            lastUpdated: "2024-01-01T00:00:00.000Z",
-            dateAdded: "2013-04-28T00:00:00.000Z",
-            tags: ["mineable"],
-            platform: nil,
-            quote: quote
-        )
-    }
-    
     private func makeExchange() -> Exchange {
         return Exchange(
             id: 270,
@@ -131,13 +102,30 @@ final class ExchangeDetailPresenterTests: XCTestCase {
             fiats: ["USD", "EUR"],
             tags: nil,
             type: "",
-            makerFee: 0.02,
-            takerFee: 0.04,
+            makerFee: 0.10,
+            takerFee: 0.10,
             weeklyVisits: 5123451,
             spotVolumeUsd: 66926283498.60113,
             spotVolumeLastUpdated: "2021-05-06T01:20:15.451Z",
             urls: ExchangeURLs(website: ["https://binance.com"], twitter: nil, blog: nil, chat: nil, fee: nil)
         )
+    }
+    
+    private func makeExchangeAssets() -> [ExchangeAsset] {
+        return [
+            ExchangeAsset(
+                walletAddress: "0x5a52e96bacdabb82fd05763e25335261b270efcb",
+                balance: 45000000,
+                platform: AssetPlatform(cryptoId: 1027, symbol: "ETH", name: "Ethereum"),
+                currency: AssetCurrency(cryptoId: 5117, priceUsd: 0.10241799413549, symbol: "OGN", name: "Origin Protocol")
+            ),
+            ExchangeAsset(
+                walletAddress: "0xf977814e90da44bfa03b6295a0616a897441acec",
+                balance: 400000000,
+                platform: AssetPlatform(cryptoId: 1027, symbol: "ETH", name: "Ethereum"),
+                currency: AssetCurrency(cryptoId: 5824, priceUsd: 0.00251174724338, symbol: "SLP", name: "Smooth Love Potion")
+            )
+        ]
     }
 }
 
