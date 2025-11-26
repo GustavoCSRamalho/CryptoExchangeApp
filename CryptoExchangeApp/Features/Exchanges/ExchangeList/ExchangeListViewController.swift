@@ -1,5 +1,6 @@
 import UIKit
 import Foundation
+import SnapKit
 
 protocol ExchangesDisplayLogic: AnyObject {
     func displayExchanges(viewModel: Exchanges.FetchExchanges.ViewModel)
@@ -14,14 +15,12 @@ final class ExchangesViewController: UIViewController {
     
     private lazy var errorView: ErrorView = {
         let view = ErrorView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
         return view
     }()
     
     private lazy var tableView: UITableView = {
         let table = UITableView()
-        table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
         table.register(ExchangeTableViewCell.self, forCellReuseIdentifier: ExchangeTableViewCell.identifier)
@@ -39,7 +38,6 @@ final class ExchangesViewController: UIViewController {
     
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.color = DesignSystem.Colors.primary
         indicator.hidesWhenStopped = true
         return indicator
@@ -47,7 +45,6 @@ final class ExchangesViewController: UIViewController {
     
     private lazy var emptyStateLabel: UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = L10n.Exchanges.emptyState
         label.textColor = DesignSystem.Colors.textSecondary
         label.font = DesignSystem.Typography.body
@@ -81,25 +78,23 @@ final class ExchangesViewController: UIViewController {
             self?.navigationController?.popViewController(animated: true)
         }
         
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            
-            emptyStateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyStateLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyStateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            emptyStateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-            
-            errorView.topAnchor.constraint(equalTo: view.topAnchor),
-            errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        emptyStateLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().inset(32)
+        }
+        
+        errorView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
     private func fetchExchanges() {
@@ -119,23 +114,28 @@ final class ExchangesViewController: UIViewController {
 extension ExchangesViewController: ExchangesDisplayLogic {
     func displayExchanges(viewModel: Exchanges.FetchExchanges.ViewModel) {
         DispatchQueue.main.async { [weak self] in
-            self?.exchanges = viewModel.exchanges
-            self?.tableView.reloadData()
-            self?.loadingIndicator.stopAnimating()
-            self?.refreshControl.endRefreshing()
-            self?.emptyStateLabel.isHidden = !viewModel.exchanges.isEmpty
+            guard let self = self else { return }
             
-            self?.errorView.isHidden = true
-            self?.tableView.isHidden = false
+            self.exchanges = viewModel.exchanges
+            self.tableView.reloadData()
+            self.loadingIndicator.stopAnimating()
+            self.refreshControl.endRefreshing()
+            self.emptyStateLabel.isHidden = !viewModel.exchanges.isEmpty
+            
+            self.errorView.isHidden = true
+            self.tableView.isHidden = false
         }
     }
     
     func displayError(viewModel: Exchanges.Error.ViewModel) {
         DispatchQueue.main.async { [weak self] in
-            self?.loadingIndicator.stopAnimating()
-            self?.refreshControl.endRefreshing()
+            guard let self = self else { return }
+            
+            self.loadingIndicator.stopAnimating()
+            self.refreshControl.endRefreshing()
             
             let apiError: APIError
+            
             if viewModel.message.contains("400") {
                 apiError = .badRequest(message: L10n.Error.Message.badRequestId)
             } else if viewModel.message.contains("401") {
@@ -150,9 +150,9 @@ extension ExchangesViewController: ExchangesDisplayLogic {
                 apiError = .unknown
             }
             
-            self?.errorView.configure(with: apiError)
-            self?.errorView.isHidden = false
-            self?.tableView.isHidden = true
+            self.errorView.configure(with: apiError)
+            self.errorView.isHidden = false
+            self.tableView.isHidden = true
         }
     }
 }

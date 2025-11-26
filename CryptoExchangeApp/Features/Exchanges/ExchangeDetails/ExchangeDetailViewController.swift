@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import SnapKit
 
 protocol ExchangeDetailDisplayLogic: AnyObject {
     func displayDetail(viewModel: ExchangeDetail.FetchDetail.ViewModel)
@@ -14,33 +15,24 @@ final class ExchangeDetailViewController: UIViewController {
     
     private lazy var errorView: ErrorView = {
         let view = ErrorView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
         return view
     }()
     
-    init(exchangeId: Int) {
-        self.exchangeId = exchangeId
-        super.init(nibName: nil, bundle: nil)
-    }
-    
     private lazy var scrollView: UIScrollView = {
         let scroll = UIScrollView()
-        scroll.translatesAutoresizingMaskIntoConstraints = false
         scroll.backgroundColor = DesignSystem.Colors.secondaryBackground
         return scroll
     }()
     
     private lazy var contentView: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 50
         imageView.clipsToBounds = true
         imageView.backgroundColor = DesignSystem.Colors.cardBackground
@@ -52,7 +44,6 @@ final class ExchangeDetailViewController: UIViewController {
         label.font = DesignSystem.Typography.titleLarge
         label.textColor = DesignSystem.Colors.textPrimary
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -61,13 +52,11 @@ final class ExchangeDetailViewController: UIViewController {
         label.font = DesignSystem.Typography.caption
         label.textColor = DesignSystem.Colors.textSecondary
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var descriptionCard: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = DesignSystem.Colors.cardBackground
         view.layer.cornerRadius = 12
         view.layer.shadowColor = UIColor.black.cgColor
@@ -82,13 +71,11 @@ final class ExchangeDetailViewController: UIViewController {
         label.font = DesignSystem.Typography.body
         label.textColor = DesignSystem.Colors.textPrimary
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var infoCard: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = DesignSystem.Colors.cardBackground
         view.layer.cornerRadius = 12
         view.layer.shadowColor = UIColor.black.cgColor
@@ -102,7 +89,6 @@ final class ExchangeDetailViewController: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 12
-        stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
     
@@ -111,13 +97,11 @@ final class ExchangeDetailViewController: UIViewController {
         label.text = L10n.Detail.tradingPairs
         label.font = DesignSystem.Typography.titleSection
         label.textColor = DesignSystem.Colors.textPrimary
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var currenciesTableView: UITableView = {
         let table = UITableView()
-        table.translatesAutoresizingMaskIntoConstraints = false
         table.delegate = self
         table.dataSource = self
         table.register(ExchangeDetailsTableViewCell.self, forCellReuseIdentifier: ExchangeDetailsTableViewCell.identifier)
@@ -131,23 +115,31 @@ final class ExchangeDetailViewController: UIViewController {
     
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.color = DesignSystem.Colors.primary
         indicator.hidesWhenStopped = true
         return indicator
     }()
     
-    private var currenciesTableHeightConstraint: NSLayoutConstraint?
+    private var currenciesTableHeightConstraint: Constraint?
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    init(exchangeId: Int) {
+        self.exchangeId = exchangeId
+        super.init(nibName: nil, bundle: nil)
     }
+    
+    required init?(coder: NSCoder) { fatalError("init(coder:) not implemented") }
+    
+    
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         fetchDetail()
     }
+    
+    
+    // MARK: - Setup
     
     private func setupView() {
         title = L10n.Detail.title
@@ -168,126 +160,128 @@ final class ExchangeDetailViewController: UIViewController {
         contentView.addSubview(currenciesLabel)
         contentView.addSubview(currenciesTableView)
         
-        errorView.onRetry = { [weak self] in
-            self?.fetchDetail()
-        }
-
-        errorView.onCancel = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+        errorView.onRetry = { [weak self] in self?.fetchDetail() }
+        errorView.onCancel = { [weak self] in self?.navigationController?.popViewController(animated: true) }
+        
+        
+        // MARK: SnapKit Constraints
+        
+        errorView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         
-        currenciesTableHeightConstraint = currenciesTableView.heightAnchor.constraint(equalToConstant: 0)
-        currenciesTableHeightConstraint?.isActive = true
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.left.right.bottom.equalToSuperview()
+        }
         
-        NSLayoutConstraint.activate([
-            errorView.topAnchor.constraint(equalTo: view.topAnchor),
-            errorView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            errorView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            errorView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalTo(scrollView)
+        }
+        
+        logoImageView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(24)
+            make.centerX.equalToSuperview()
+            make.width.height.equalTo(100)
+        }
+        
+        nameLabel.snp.makeConstraints { make in
+            make.top.equalTo(logoImageView.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+        }
+        
+        idLabel.snp.makeConstraints { make in
+            make.top.equalTo(nameLabel.snp.bottom).offset(4)
+            make.left.right.equalToSuperview().inset(16)
+        }
+        
+        descriptionCard.snp.makeConstraints { make in
+            make.top.equalTo(idLabel.snp.bottom).offset(24)
+            make.left.right.equalToSuperview().inset(16)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        infoCard.snp.makeConstraints { make in
+            make.top.equalTo(descriptionCard.snp.bottom).offset(16)
+            make.left.right.equalToSuperview().inset(16)
+        }
+        
+        infoStackView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(16)
+        }
+        
+        currenciesLabel.snp.makeConstraints { make in
+            make.top.equalTo(infoCard.snp.bottom).offset(24)
+            make.left.right.equalToSuperview().inset(16)
+        }
+        
+        currenciesTableView.snp.makeConstraints { make in
+            make.top.equalTo(currenciesLabel.snp.bottom).offset(12)
+            make.left.right.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().offset(-24)
             
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-            logoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            logoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 100),
-            logoImageView.heightAnchor.constraint(equalToConstant: 100),
-            
-            nameLabel.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 16),
-            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            idLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
-            idLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            idLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            descriptionCard.topAnchor.constraint(equalTo: idLabel.bottomAnchor, constant: 24),
-            descriptionCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            descriptionCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            descriptionLabel.topAnchor.constraint(equalTo: descriptionCard.topAnchor, constant: 16),
-            descriptionLabel.leadingAnchor.constraint(equalTo: descriptionCard.leadingAnchor, constant: 16),
-            descriptionLabel.trailingAnchor.constraint(equalTo: descriptionCard.trailingAnchor, constant: -16),
-            descriptionLabel.bottomAnchor.constraint(equalTo: descriptionCard.bottomAnchor, constant: -16),
-            
-            infoCard.topAnchor.constraint(equalTo: descriptionCard.bottomAnchor, constant: 16),
-            infoCard.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            infoCard.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            infoStackView.topAnchor.constraint(equalTo: infoCard.topAnchor, constant: 16),
-            infoStackView.leadingAnchor.constraint(equalTo: infoCard.leadingAnchor, constant: 16),
-            infoStackView.trailingAnchor.constraint(equalTo: infoCard.trailingAnchor, constant: -16),
-            infoStackView.bottomAnchor.constraint(equalTo: infoCard.bottomAnchor, constant: -16),
-            
-            currenciesLabel.topAnchor.constraint(equalTo: infoCard.bottomAnchor, constant: 24),
-            currenciesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            currenciesLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            currenciesTableView.topAnchor.constraint(equalTo: currenciesLabel.bottomAnchor, constant: 12),
-            currenciesTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            currenciesTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            currenciesTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
-            
-            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+            currenciesTableHeightConstraint = make.height.equalTo(0).constraint
+        }
+        
+        loadingIndicator.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
+    
+    
+    // MARK: - Fetch
     
     private func fetchDetail() {
         loadingIndicator.startAnimating()
-        let request = ExchangeDetail.FetchDetail.Request(exchangeId: exchangeId)
-        interactor?.fetchDetail(request: request)
+        interactor?.fetchDetail(request: ExchangeDetail.FetchDetail.Request(exchangeId: exchangeId))
     }
+    
+    
+    // MARK: - Info Row Builder (SnapKit)
     
     private func createInfoRow(title: String, value: String) -> UIView {
         let container = UIView()
-        container.translatesAutoresizingMaskIntoConstraints = false
         
         let titleLabel = UILabel()
         titleLabel.font = DesignSystem.Typography.body
         titleLabel.textColor = DesignSystem.Colors.textSecondary
         titleLabel.text = title
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let valueLabel = UILabel()
         valueLabel.font = DesignSystem.Typography.subtitle
         valueLabel.textColor = DesignSystem.Colors.textPrimary
         valueLabel.text = value
         valueLabel.textAlignment = .right
-        valueLabel.translatesAutoresizingMaskIntoConstraints = false
         
         container.addSubview(titleLabel)
         container.addSubview(valueLabel)
         
-        NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: valueLabel.leadingAnchor, constant: -8),
-            
-            valueLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-            valueLabel.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            valueLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
-            
-            container.heightAnchor.constraint(equalToConstant: 24)
-        ])
+        container.snp.makeConstraints { make in
+            make.height.equalTo(24)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.left.centerY.equalToSuperview()
+            make.right.equalTo(valueLabel.snp.left).offset(-8)
+        }
+        
+        valueLabel.snp.makeConstraints { make in
+            make.right.centerY.equalToSuperview()
+            make.width.greaterThanOrEqualTo(100)
+        }
         
         return container
     }
 }
 
+
 extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
     func displayDetail(viewModel: ExchangeDetail.FetchDetail.ViewModel) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
+        DispatchQueue.main.async {
             self.viewModel = viewModel
             self.loadingIndicator.stopAnimating()
             
@@ -298,26 +292,23 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
             self.idLabel.text = L10n.Detail.idLabel(viewModel.id)
             self.descriptionLabel.text = viewModel.description
             
-            if let logoURL = viewModel.logoURL, let url = URL(string: logoURL) {
-                self.logoImageView.kf.setImage(
-                    with: url,
-                    placeholder: UIImage(systemName: "building.columns.fill")
-                )
+            if let logoURL = viewModel.logoURL,
+               let url = URL(string: logoURL) {
+                self.logoImageView.kf.setImage(with: url,
+                                               placeholder: UIImage(systemName: "building.columns.fill"))
             } else {
                 self.logoImageView.image = UIImage(systemName: "building.columns.fill")
                 self.logoImageView.tintColor = DesignSystem.Colors.textSecondary
             }
             
             self.infoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-            
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.website, value: viewModel.website))
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.makerFee, value: viewModel.makerFee))
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.takerFee, value: viewModel.takerFee))
             self.infoStackView.addArrangedSubview(self.createInfoRow(title: L10n.Detail.dateLaunched, value: viewModel.dateLaunched))
             
-            let currenciesCount = viewModel.currencies.count
-            let tableHeight = CGFloat(currenciesCount * 60)
-            self.currenciesTableHeightConstraint?.constant = tableHeight
+            let height = CGFloat(viewModel.currencies.count * 60)
+            self.currenciesTableHeightConstraint?.update(offset: height)
             self.currenciesTableView.reloadData()
             
             self.view.layoutIfNeeded()
@@ -325,8 +316,8 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
     }
     
     func displayError(viewModel: ExchangeDetail.Error.ViewModel) {
-        DispatchQueue.main.async { [weak self] in
-            self?.loadingIndicator.stopAnimating()
+        DispatchQueue.main.async {
+            self.loadingIndicator.stopAnimating()
             
             let apiError: APIError
             if viewModel.message.contains("400") {
@@ -343,12 +334,13 @@ extension ExchangeDetailViewController: ExchangeDetailDisplayLogic {
                 apiError = .unknown
             }
             
-            self?.errorView.configure(with: apiError)
-            self?.errorView.isHidden = false
-            self?.scrollView.isHidden = true
+            self.errorView.configure(with: apiError)
+            self.errorView.isHidden = false
+            self.scrollView.isHidden = true
         }
     }
 }
+
 
 extension ExchangeDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -356,15 +348,15 @@ extension ExchangeDetailViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: ExchangeDetailsTableViewCell.identifier,
-            for: indexPath
-        ) as? ExchangeDetailsTableViewCell,
-              let currency = viewModel?.currencies[indexPath.row] else {
+        let currency = viewModel?.currencies[indexPath.row]
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ExchangeDetailsTableViewCell.identifier, for: indexPath) as? ExchangeDetailsTableViewCell else {
             return UITableViewCell()
         }
         
-        cell.configure(with: currency)
+        if let currency = currency {
+            cell.configure(with: currency)
+        }
         cell.selectionStyle = .none
         return cell
     }
