@@ -5,7 +5,7 @@ enum APIError {
     case unauthorized
     case forbidden
     case tooManyRequests
-    case internalServerError
+    case internalServerError(statusCode: Int)
     case noData
     case decodingError
     case networkFailure(Error)
@@ -44,8 +44,8 @@ enum APIError {
             return L10n.Error.Message.forbidden
         case .tooManyRequests:
             return L10n.Error.Message.rateLimit
-        case .internalServerError:
-            return L10n.Error.Message.serverError
+        case .internalServerError(let statusCode):
+            return L10n.Error.Message.serverError(statusCode)
         case .noData:
             return L10n.Error.Message.noData
         case .decodingError:
@@ -98,7 +98,7 @@ extension NetworkError {
             case 429:
                 return .tooManyRequests
             case 500...599:
-                return .internalServerError
+                return .internalServerError(statusCode: statusCode)
             default:
                 return .unknown
             }

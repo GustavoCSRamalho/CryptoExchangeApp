@@ -145,7 +145,7 @@ extension ExchangesViewController: ExchangesDisplayLogic {
             } else if viewModel.message.contains("429") {
                 apiError = .tooManyRequests
             } else if viewModel.message.contains("500") {
-                apiError = .internalServerError
+                apiError = .internalServerError(statusCode: 500)
             } else {
                 apiError = .unknown
             }
