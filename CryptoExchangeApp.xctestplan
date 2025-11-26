@@ -1,0 +1,36 @@
+{
+  "configurations" : [
+    {
+      "id" : "9CF18136-26B4-4ADE-B6C9-16FF6EBE78F5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CryptoExchangeApp.xcodeproj",
+      "identifier" : "0C5F27752ED51B68001CE5FF",
+      "name" : "CryptoExchangeApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:CryptoExchangeApp.xcodeproj",
+        "identifier" : "0C5F27832ED51B6B001CE5FF",
+        "name" : "CryptoExchangeAppTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:CryptoExchangeApp.xcodeproj",
+        "identifier" : "0C5F278D2ED51B6B001CE5FF",
+        "name" : "CryptoExchangeAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
