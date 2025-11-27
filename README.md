@@ -81,7 +81,11 @@ CryptoExchangeApp/
 │
 ├── 📁 Models/
 │   ├── Exchange.swift          # Modelos de dados
-│   └── ExchangeAsset.swift
+│   ├── ExchangeDetail.swift
+│   ├── ExchangeList.swift
+│   ├── ExchangeViewModel.swift
+│   ├── NetworkError.swift
+│   └── Response.swift
 │
 ├── 📁 Networking/
 │   ├── NetworkService.swift
