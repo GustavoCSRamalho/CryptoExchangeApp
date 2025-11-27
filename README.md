@@ -62,7 +62,7 @@ Este projeto utiliza **VIP-C (Clean Swift)**, uma arquitetura unidirecional que 
 ```
 CryptoExchangeApp/
 ├── 📁 Scenes/
-│   ├── ExchangeList/          # Lista de exchanges
+│   ├── 📁 ExchangeList/          # Lista de exchanges
 │   │   ├── ExchangeListViewController.swift
 │   │   ├── ExchangeListInteractor.swift
 │   │   ├── ExchangeListPresenter.swift
@@ -71,7 +71,7 @@ CryptoExchangeApp/
 │   │   ├── ExchangeListFactory.swift
 │   │   └── ExchangeVIPModels.swift
 │   │
-│   └── ExchangeDetail/        # Detalhes da exchange
+│   └── 📁 ExchangeDetail/        # Detalhes da exchange
 │       ├── ExchangeDetailViewController.swift
 │       ├── ExchangeDetailInteractor.swift
 │       ├── ExchangeDetailPresenter.swift
@@ -79,6 +79,9 @@ CryptoExchangeApp/
 │       ├── ExchangeDetailFactory.swift
 │       └── ExchangeDetailModels.swift
 │
+├── 📁 Application/
+│   ├── AppDelegate.swift   
+|
 ├── 📁 Models/
 │   ├── Exchange.swift          # Modelos de dados
 │   ├── ExchangeDetail.swift
@@ -87,21 +90,23 @@ CryptoExchangeApp/
 │   ├── NetworkError.swift
 │   └── Response.swift
 │
-├── 📁 Networking/
+├── 📁 Services/
 │   ├── NetworkService.swift
-│   └── MockNetworkService.swift
+│   └── 📁 Constants/
+|       └── ApiConstants.swift
 │
 ├── 📁 UI/
-│   ├── Components/
+│   ├── 📁 Components/
 │   │   ├── ExchangeTableViewCell.swift
 │   │   ├── ExchangeDetailsTableViewCell.swift
 │   │   └── ErrorView.swift
 │   │
-│   └── DesignSystem/
+│   └── 📁 DesignSystem/
 │       └── DesignSystem.swift
 │
 ├── 📁 Resources/
 │   ├── Localizable.strings     # Internacionalização
+|   ├── CryptoExchangeApp.entitlements
 │   └── Assets.xcassets
 │
 └── 📁 Helpers/
@@ -110,10 +115,10 @@ CryptoExchangeApp/
     └── Constants/
     |   └── APIConstants.swift
     |    
-    └── Mock/
+    └── 📁 Mock/
         ├── MockNetworkService.swift
         └── AsyncExecutorMock.swift
-    └── Error/
+    └── 📁 Error/
         ├── AsyncExecutor.swift
         └── ErrorMessages.swift
 ```
