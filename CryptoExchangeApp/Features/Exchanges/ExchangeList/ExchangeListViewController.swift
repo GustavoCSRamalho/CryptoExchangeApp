@@ -9,7 +9,7 @@ protocol ExchangesListDisplayLogic: AnyObject {
 
 final class ExchangesListViewController: UIViewController {
     var interactor: ExchangesListInteractorProtocol?
-    var router: ExchangesListRouterProtocol?
+    var router: ExchangesListCoordinatorProtocol?
     
     private var exchanges: [ExchangeViewModel] = []
     

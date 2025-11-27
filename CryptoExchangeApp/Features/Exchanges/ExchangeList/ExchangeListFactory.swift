@@ -37,7 +37,7 @@ enum ExchangesListFactory {
             network = NetworkService()
         }
         
-        let router = ExchangesListRouter()
+        let router = ExchangesListCoordinator()
         let worker = ExchangesListWorker(networkService: network)
         
         viewController.interactor = interactor
