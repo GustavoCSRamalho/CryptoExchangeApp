@@ -188,20 +188,8 @@ Usando SPM:
 
 ### Configurando no Projeto
 
-#### Opção 1: Environment Variables (Recomendado)
 
-1. No Xcode, vá em: `Product` → `Scheme` → `Edit Scheme`
-2. Selecione `Run` → `Arguments`
-3. Adicione em **Environment Variables**:
-
-```
-Name: COINMARKETCAP_API_KEY
-Value: SUA_API_KEY_AQUI
-```
-
-![API Key Configuration](screenshots/api-key-setup.png)
-
-#### Opção 2: Arquivo de Configuração
+#### Opção 1: Arquivo de Configuração
 
 1. Crie uma pasta Supporting Files, depois Configuration, la voce adicione dois arquivos,`Debug.xcconfig` e `Release.xcconfig`:
 
