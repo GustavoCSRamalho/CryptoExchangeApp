@@ -435,6 +435,98 @@ GET https://pro-api.coinmarketcap.com/v1/exchange/assets
 **Parâmetros:**
 - `id`: 270
 
+**Resposta:**
+```json
+{
+   "status":{
+      "timestamp":"2022-11-24T08:23:22.028Z",
+      "error_code":0,
+      "error_message":null,
+      "elapsed":1828,
+      "credit_count":0,
+      "notice":null
+   },
+   "data":[
+      {
+         "wallet_address":"0x5a52e96bacdabb82fd05763e25335261b270efcb",
+         "balance":45000000,
+         "platform":{
+            "crypto_id":1027,
+            "symbol":"ETH",
+            "name":"Ethereum"
+         },
+         "currency":{
+            "crypto_id":5117,
+            "price_usd":0.10241799413549,
+            "symbol":"OGN",
+            "name":"Origin Protocol"
+         }
+      },
+      {
+         "wallet_address":"0xf977814e90da44bfa03b6295a0616a897441acec",
+         "balance":400000000,
+         "platform":{
+            "crypto_id":1027,
+            "symbol":"ETH",
+            "name":"Ethereum"
+         },
+         "currency":{
+            "crypto_id":5824,
+            "price_usd":0.00251174724338,
+            "symbol":"SLP",
+            "name":"Smooth Love Potion"
+         }
+      },
+      {
+         "wallet_address":"0x5a52e96bacdabb82fd05763e25335261b270efcb",
+         "balance":5588175,
+         "platform":{
+            "crypto_id":1027,
+            "symbol":"ETH",
+            "name":"Ethereum"
+         },
+         "currency":{
+            "crypto_id":3928,
+            "price_usd":0.04813245442357,
+            "symbol":"IDEX",
+            "name":"IDEX"
+         }
+      },
+      {
+         "wallet_address":"0x5a52e96bacdabb82fd05763e25335261b270efcb",
+         "balance":125000,
+         "platform":{
+            "crypto_id":1027,
+            "symbol":"ETH",
+            "name":"Ethereum"
+         },
+         "currency":{
+            "crypto_id":1552,
+            "price_usd":20.46545919550142,
+            "symbol":"MLN",
+            "name":"Enzyme"
+         }
+      },
+      {
+         "wallet_address":"0x21a31ee1afc51d94c2efccaa2092ad1028285549",
+         "balance":27241191.98,
+         "platform":{
+            "crypto_id":1027,
+            "symbol":"ETH",
+            "name":"Ethereum"
+         },
+         "currency":{
+            "crypto_id":14806,
+            "price_usd":0.02390427295165,
+            "symbol":"PEOPLE",
+            "name":"ConstitutionDAO"
+         }
+      }
+   ]
+}
+```
+  
+
 ---
 
 ## 📄 Licença
