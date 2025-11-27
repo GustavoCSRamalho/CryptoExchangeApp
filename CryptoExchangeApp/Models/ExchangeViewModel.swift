@@ -1,3 +1,4 @@
+import Foundation
 enum Exchanges {
     enum FetchExchanges {
         struct Request {}
