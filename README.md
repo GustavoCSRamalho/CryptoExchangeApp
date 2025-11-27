@@ -316,26 +316,37 @@ Para executar testes de UI com dados mockados:
 
 **Launch Arguments:**
 ```
-UI-TESTING
 -AppleLanguages (en)
 -AppleLocale en_US
 ```
 
 **Environment Variables:**
 ```
-MOCK_SUCCESS = 1
+[
+MOCK_SUCCESS = 1,
+UI-TESTING = 1
+]
+
 ```
 
 ### Testando Diferentes Cenários de Erro
 
 **Launch Arguments:**
 ```
-UI-TESTING
-MOCK-NETWORK-ERROR
+-AppleLanguages (en)
+-AppleLocale en_US
 ```
 
 **Environment Variables:**
 ```
+[
+MOCK_ERROR = 1,
+UI_TESTING = 1,
+MOCK_ERROR_TYPE = 401,
+]
+
+---------------
+
 MOCK_ERROR_TYPE = 401    # Erro de autenticação
 MOCK_ERROR_TYPE = 403    # Acesso negado
 MOCK_ERROR_TYPE = 429    # Rate limit
