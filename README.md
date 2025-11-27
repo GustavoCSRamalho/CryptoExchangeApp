@@ -105,7 +105,11 @@ CryptoExchangeApp/
 │   └── Assets.xcassets
 │
 └── 📁 Helpers/
+    ├── Localizable.swift
     └── UITestingHelper.swift
+    └── Mock/
+        ├── MockNetworkService.swift
+        └── AsyncExecutorMock.swift
 ```
 
 ### Fluxo de Dados VIP-C
