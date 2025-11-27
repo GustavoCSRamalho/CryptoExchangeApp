@@ -62,16 +62,16 @@ Este projeto utiliza **VIP-C (Clean Swift)**, uma arquitetura unidirecional que 
 ```
 CryptoExchangeApp/
 ├── 📁 Scenes/
-│   ├── ExchangeList/          # Lista de exchanges
+│   ├── 📁 ExchangeList/          # Lista de exchanges
 │   │   ├── ExchangeListViewController.swift
 │   │   ├── ExchangeListInteractor.swift
 │   │   ├── ExchangeListPresenter.swift
 │   │   ├── ExchangeListWorker.swift
-│   │   ├── ExchangeListRouter.swift
+│   │   ├── ExchangeListCoordiantor.swift
 │   │   ├── ExchangeListFactory.swift
 │   │   └── ExchangeVIPModels.swift
 │   │
-│   └── ExchangeDetail/        # Detalhes da exchange
+│   └── 📁 ExchangeDetail/        # Detalhes da exchange
 │       ├── ExchangeDetailViewController.swift
 │       ├── ExchangeDetailInteractor.swift
 │       ├── ExchangeDetailPresenter.swift
@@ -79,29 +79,48 @@ CryptoExchangeApp/
 │       ├── ExchangeDetailFactory.swift
 │       └── ExchangeDetailModels.swift
 │
+├── 📁 Application/
+│   ├── AppDelegate.swift   
+|
 ├── 📁 Models/
 │   ├── Exchange.swift          # Modelos de dados
-│   └── ExchangeAsset.swift
+│   ├── ExchangeDetail.swift
+│   ├── ExchangeList.swift
+│   ├── ExchangeViewModel.swift
+│   ├── NetworkError.swift
+│   └── Response.swift
 │
-├── 📁 Networking/
+├── 📁 Services/
 │   ├── NetworkService.swift
-│   └── MockNetworkService.swift
+│   └── 📁 Constants/
+|       └── ApiConstants.swift
 │
 ├── 📁 UI/
-│   ├── Components/
+│   ├── 📁 Components/
 │   │   ├── ExchangeTableViewCell.swift
 │   │   ├── ExchangeDetailsTableViewCell.swift
 │   │   └── ErrorView.swift
 │   │
-│   └── DesignSystem/
+│   └── 📁 DesignSystem/
 │       └── DesignSystem.swift
 │
 ├── 📁 Resources/
 │   ├── Localizable.strings     # Internacionalização
+|   ├── CryptoExchangeApp.entitlements
 │   └── Assets.xcassets
 │
 └── 📁 Helpers/
+    ├── Localizable.swift
     └── UITestingHelper.swift
+    └── Constants/
+    |   └── APIConstants.swift
+    |    
+    └── 📁 Mock/
+        ├── MockNetworkService.swift
+        └── AsyncExecutorMock.swift
+    └── 📁 Error/
+        ├── AsyncExecutor.swift
+        └── ErrorMessages.swift
 ```
 
 ### Fluxo de Dados VIP-C
