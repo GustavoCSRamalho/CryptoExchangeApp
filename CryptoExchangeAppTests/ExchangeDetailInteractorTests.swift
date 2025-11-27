@@ -5,20 +5,25 @@ final class ExchangeDetailInteractorTests: XCTestCase {
     var sut: ExchangeDetailInteractor!
     var presenterSpy: ExchangeDetailPresenterSpy!
     var workerSpy: ExchangeDetailWorkerSpy!
+    var executorMock: AsyncExecutorMock!
     
     override func setUp() {
         super.setUp()
         sut = ExchangeDetailInteractor()
         presenterSpy = ExchangeDetailPresenterSpy()
         workerSpy = ExchangeDetailWorkerSpy()
+        executorMock = AsyncExecutorMock()
+        
         sut.presenter = presenterSpy
         sut.worker = workerSpy
+        sut.executor = executorMock
     }
     
     override func tearDown() {
         sut = nil
         presenterSpy = nil
         workerSpy = nil
+        executorMock = nil
         super.tearDown()
     }
     
@@ -30,26 +35,46 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         workerSpy.fetchExchangeAssetsResult = .success(assets)
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
+        let expectation = expectation(description: "Fetch detail success")
+        
         // When
         sut.fetchDetail(request: request)
         
+        // Wait for async completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3.0)
+        
         // Then
-        XCTAssertTrue(presenterSpy.presentDetailCalled)
+        XCTAssertTrue(presenterSpy.presentDetailCalled, "Should call presentDetail")
         XCTAssertEqual(presenterSpy.presentedExchange?.name, "Binance")
         XCTAssertEqual(presenterSpy.presentedAssets?.count, 2)
+        XCTAssertFalse(presenterSpy.presentErrorCalled, "Should not call presentError")
     }
     
     func testFetchDetailInfoFailure() {
         // Given
         workerSpy.fetchExchangeInfoResult = .failure(.noData)
+        workerSpy.fetchExchangeAssetsResult = .success([]) // ← IMPORTANTE: Definir para evitar nil
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
+        
+        let expectation = expectation(description: "Fetch detail info failure")
         
         // When
         sut.fetchDetail(request: request)
         
+        // Wait for async completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3.0)
+        
         // Then
-        XCTAssertTrue(presenterSpy.presentErrorCalled)
-        XCTAssertFalse(presenterSpy.presentDetailCalled)
+        XCTAssertTrue(presenterSpy.presentErrorCalled, "Should call presentError")
+        XCTAssertFalse(presenterSpy.presentDetailCalled, "Should not call presentDetail")
     }
     
     func testFetchDetailAssetsFailure() {
@@ -59,15 +84,50 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         workerSpy.fetchExchangeAssetsResult = .failure(.noData)
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
+        let expectation = expectation(description: "Fetch detail assets failure")
+        
         // When
         sut.fetchDetail(request: request)
         
+        // Wait for async completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3.0)
+        
+        // Then - MUDOU: Agora usa fallback []
+        XCTAssertTrue(presenterSpy.presentDetailCalled, "Should call presentDetail with fallback")
+        XCTAssertEqual(presenterSpy.presentedExchange?.name, "Binance")
+        XCTAssertEqual(presenterSpy.presentedAssets?.count, 0, "Should use empty array fallback")
+        XCTAssertFalse(presenterSpy.presentErrorCalled, "Should not call presentError (uses fallback)")
+    }
+    
+    func testFetchDetailBothFailure() {
+        // Given
+        workerSpy.fetchExchangeInfoResult = .failure(.serverError(statusCode: 500))
+        workerSpy.fetchExchangeAssetsResult = .failure(.noData)
+        let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
+        
+        let expectation = expectation(description: "Fetch detail both failure")
+        
+        // When
+        sut.fetchDetail(request: request)
+        
+        // Wait for async completion
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3.0)
+        
         // Then
-        XCTAssertTrue(presenterSpy.presentErrorCalled)
-        XCTAssertFalse(presenterSpy.presentDetailCalled)
+        XCTAssertTrue(presenterSpy.presentErrorCalled, "Should call presentError")
+        XCTAssertFalse(presenterSpy.presentDetailCalled, "Should not call presentDetail")
     }
     
     // MARK: - Helpers
+    
     private func makeExchange() -> Exchange {
         return Exchange(
             id: 270,
@@ -86,7 +146,13 @@ final class ExchangeDetailInteractorTests: XCTestCase {
             weeklyVisits: 5123451,
             spotVolumeUsd: 66926283498.60113,
             spotVolumeLastUpdated: "2021-05-06T01:20:15.451Z",
-            urls: ExchangeURLs(website: ["https://binance.com"], twitter: nil, blog: nil, chat: nil, fee: nil)
+            urls: ExchangeURLs(
+                website: ["https://binance.com"],
+                twitter: nil,
+                blog: nil,
+                chat: nil,
+                fee: nil
+            )
         )
     }
     
@@ -107,6 +173,8 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         ]
     }
 }
+
+// MARK: - Spy Classes
 
 class ExchangeDetailPresenterSpy: ExchangeDetailPresenterProtocol {
     var presentDetailCalled = false
@@ -130,13 +198,29 @@ class ExchangeDetailWorkerSpy: ExchangeDetailWorkerProtocol {
     var fetchExchangeAssetsResult: Result<[ExchangeAsset], NetworkError>?
     
     func fetchExchangeInfo(id: Int, completion: @escaping (Result<Exchange, NetworkError>) -> Void) {
-        if let result = fetchExchangeInfoResult {
+        // ✅ CRÍTICO: SEMPRE chamar completion, mesmo se result for nil
+        guard let result = fetchExchangeInfoResult else {
+            print("⚠️ WARNING: fetchExchangeInfoResult is nil!")
+            completion(.failure(.unknown))
+            return
+        }
+        
+        // Simula delay de rede
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             completion(result)
         }
     }
     
     func fetchExchangeAssets(id: Int, completion: @escaping (Result<[ExchangeAsset], NetworkError>) -> Void) {
-        if let result = fetchExchangeAssetsResult {
+        // ✅ CRÍTICO: SEMPRE chamar completion, mesmo se result for nil
+        guard let result = fetchExchangeAssetsResult else {
+            print("⚠️ WARNING: fetchExchangeAssetsResult is nil!")
+            completion(.failure(.unknown))
+            return
+        }
+        
+        // Simula delay de rede
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             completion(result)
         }
     }
