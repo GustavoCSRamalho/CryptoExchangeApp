@@ -67,7 +67,7 @@ CryptoExchangeApp/
 │   │   ├── ExchangeListInteractor.swift
 │   │   ├── ExchangeListPresenter.swift
 │   │   ├── ExchangeListWorker.swift
-│   │   ├── ExchangeListRouter.swift
+│   │   ├── ExchangeListCoordiantor.swift
 │   │   ├── ExchangeListFactory.swift
 │   │   └── ExchangeVIPModels.swift
 │   │
