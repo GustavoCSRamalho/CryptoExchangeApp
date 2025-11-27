@@ -7,31 +7,62 @@ protocol ExchangeDetailInteractorProtocol {
 final class ExchangeDetailInteractor: ExchangeDetailInteractorProtocol {
     var presenter: ExchangeDetailPresenterProtocol?
     var worker: ExchangeDetailWorkerProtocol?
+    var executor: AsyncExecutorProtocol?
     
     func fetchDetail(request: ExchangeDetail.FetchDetail.Request) {
         let exchangeId = request.exchangeId
         
-        worker?.fetchExchangeInfo(id: exchangeId) { [weak self] infoResult in
-            switch infoResult {
-            case .success(let exchange):
-                self?.worker?.fetchExchangeAssets(id: exchangeId) { assetsResult in
-                    switch assetsResult {
-                    case .success(let assets):
-                        let response = ExchangeDetail.FetchDetail.Response(
-                            exchange: exchange,
-                            assets: assets
-                        )
-                        self?.presenter?.presentDetail(response: response)
-                        
-                    case .failure(let error):
-                        let response = ExchangeDetail.Error.Response(message: error.localizedDescription)
-                        self?.presenter?.presentError(response: response)
-                    }
-                }
-                
+        executor?.run { [weak self] in
+            guard let self = self else { return }
+            
+            let result = await self.fetchDetailData(for: exchangeId)
+            
+            switch result {
+            case .success(let (exchange, assets)):
+                self.presenter?.presentDetail(
+                    response: .init(exchange: exchange, assets: assets)
+                )
             case .failure(let error):
-                let response = ExchangeDetail.Error.Response(message: error.localizedDescription)
-                self?.presenter?.presentError(response: response)
+                self.presenter?.presentError(
+                    response: .init(message: error.localizedDescription)
+                )
+            }
+        }
+    }
+    
+    // MARK: - Business Logic
+    
+    private func fetchDetailData(for id: Int) async -> Result<(Exchange, [ExchangeAsset]), NetworkError> {
+        do {
+            async let exchangeTask = fetchExchangeInfoAsync(id: id)
+            async let assetsTask = fetchExchangeAssetsAsync(id: id)
+            
+            let exchange = try await exchangeTask
+            let assets = (try? await assetsTask) ?? []
+            
+            return .success((exchange, assets))
+            
+        } catch let error as NetworkError {
+            return .failure(error)
+        } catch {
+            return .failure(.unknown)
+        }
+    }
+    
+    // MARK: - Network Helpers
+    
+    private func fetchExchangeInfoAsync(id: Int) async throws -> Exchange {
+        try await withCheckedThrowingContinuation { continuation in
+            worker?.fetchExchangeInfo(id: id) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    private func fetchExchangeAssetsAsync(id: Int) async throws -> [ExchangeAsset] {
+        try await withCheckedThrowingContinuation { continuation in
+            worker?.fetchExchangeAssets(id: id) { result in
+                continuation.resume(with: result)
             }
         }
     }
