@@ -51,15 +51,14 @@ final class ExchangesListInteractor: ExchangesListInteractorProtocol {
 
 extension ExchangesListInteractor {
     private func fetchAllInfosInParallel(listings: [ExchangeListing]) async -> [ExchangeListing] {
-        await withTaskGroup(of: ExchangeListing.self) { group in
-            var result: [ExchangeListing] = []
-            result.reserveCapacity(listings.count)
+        await withTaskGroup(of: (Int, ExchangeListing).self) { group in
+            var result = listings
             
-            for item in listings {
+            for (index, item) in listings.enumerated() {
                 group.addTask {
                     let info = await self.safeFetchInfo(id: item.id)
 
-                    return ExchangeListing(
+                    let enriched = ExchangeListing(
                         id: item.id,
                         name: item.name,
                         slug: item.slug,
@@ -68,11 +67,12 @@ extension ExchangesListInteractor {
                         spotVolumeUsd: item.spotVolumeUsd,
                         dateLaunched: item.dateLaunched
                     )
+                    return (index, enriched)
                 }
             }
             
-            for await enriched in group {
-                result.append(enriched)
+            for await (index, enriched) in group {
+                result[index] = enriched
             }
             
             return result
