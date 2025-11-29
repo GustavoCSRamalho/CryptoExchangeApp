@@ -13,16 +13,16 @@ final class ExchangeDetailInteractor: ExchangeDetailInteractorProtocol {
         let exchangeId = request.exchangeId
         
         executor?.run { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             
-            let result = await self.fetchDetailData(for: exchangeId)
-            
-            switch result {
-            case .success(let (exchange, assets)):
+            do {
+                let (exchange, assets) = try await self.fetchDetailData(for: exchangeId)
+                
                 self.presenter?.presentDetail(
                     response: .init(exchange: exchange, assets: assets)
                 )
-            case .failure(let error):
+                
+            } catch {
                 self.presenter?.presentError(
                     response: .init(message: error.localizedDescription)
                 )
@@ -32,21 +32,14 @@ final class ExchangeDetailInteractor: ExchangeDetailInteractorProtocol {
     
     // MARK: - Business Logic
     
-    private func fetchDetailData(for id: Int) async -> Result<(Exchange, [ExchangeAsset]), NetworkError> {
-        do {
-            async let exchangeTask = fetchExchangeInfoAsync(id: id)
-            async let assetsTask = fetchExchangeAssetsAsync(id: id)
-            
-            let exchange = try await exchangeTask
-            let assets = (try? await assetsTask) ?? []
-            
-            return .success((exchange, assets))
-            
-        } catch let error as NetworkError {
-            return .failure(error)
-        } catch {
-            return .failure(.unknown)
-        }
+    private func fetchDetailData(for id: Int) async throws -> (Exchange, [ExchangeAsset]) {
+        async let exchangeTask = fetchExchangeInfoAsync(id: id)
+        async let assetsTask = fetchExchangeAssetsAsync(id: id)
+        
+        let exchange = try await exchangeTask
+        let assets = (try? await assetsTask) ?? []
+        
+        return (exchange, assets)
     }
     
     // MARK: - Network Helpers

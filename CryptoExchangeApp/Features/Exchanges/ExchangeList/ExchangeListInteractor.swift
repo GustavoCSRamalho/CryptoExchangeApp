@@ -13,29 +13,29 @@ final class ExchangesListInteractor: ExchangesListInteractorProtocol {
     private var exchanges: [ExchangeListing] = []
 
     func fetchExchanges(request: Exchanges.FetchExchanges.Request) {
-        worker?.fetchExchangeListings { [weak self] result in
+        executor?.run { [weak self] in
             guard let self else { return }
-
-            switch result {
-            case .success(let listings):
-
+            
+            do {
+                let listings: [ExchangeListing] = try await withCheckedThrowingContinuation { continuation in
+                    self.worker?.fetchExchangeListings { result in
+                        continuation.resume(with: result)
+                    }
+                }
+                
                 self.exchanges = listings
                 self.presenter?.presentExchanges(
                     response: .init(exchanges: listings)
                 )
-
-                self.executor?.run { [weak self] in
-                    guard let self else { return }
-                    
-                    let enriched = await self.fetchAllInfosInParallel(listings: listings)
-
-                    self.exchanges = enriched
-                    self.presenter?.presentExchanges(
-                        response: .init(exchanges: enriched)
-                    )
-                }
-
-            case .failure(let error):
+                
+                let enriched = await self.fetchAllInfosInParallel(listings: listings)
+                
+                self.exchanges = enriched
+                self.presenter?.presentExchanges(
+                    response: .init(exchanges: enriched)
+                )
+                
+            } catch {
                 self.presenter?.presentError(
                     response: .init(message: error.localizedDescription)
                 )
