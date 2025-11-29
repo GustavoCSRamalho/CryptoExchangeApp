@@ -36,13 +36,15 @@ final class ExchangesInteractorTests: XCTestCase {
         XCTAssertTrue(presenterSpy.presentExchangesCalled)
     }
     
-    func testFetchExchangesFailure() {
+    func testFetchExchangesFailure() async throws {
         // Given
         workerSpy.fetchExchangeListingsResult = .failure(.networkFailure(NSError(domain: "test", code: -1)))
         let request = Exchanges.FetchExchanges.Request()
         
         // When
         sut.fetchExchanges(request: request)
+        
+        try await Task.sleep(nanoseconds: 500_000_000)
         
         // Then
         XCTAssertTrue(presenterSpy.presentErrorCalled)
