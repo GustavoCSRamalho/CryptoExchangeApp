@@ -27,7 +27,7 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         super.tearDown()
     }
     
-    func testFetchDetailSuccess() {
+    func testFetchDetailSuccess() async {
         // Given
         let exchange = makeExchange()
         let assets = makeExchangeAssets()
@@ -35,17 +35,11 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         workerSpy.fetchExchangeAssetsResult = .success(assets)
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
-        let expectation = expectation(description: "Fetch detail success")
         
         // When
         sut.fetchDetail(request: request)
         
-        // Wait for async completion
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3.0)
+        await executorMock.executedOperations.first?()
         
         // Then
         XCTAssertTrue(presenterSpy.presentDetailCalled, "Should call presentDetail")
@@ -54,47 +48,35 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         XCTAssertFalse(presenterSpy.presentErrorCalled, "Should not call presentError")
     }
     
-    func testFetchDetailInfoFailure() {
+    func testFetchDetailInfoFailure() async {
         // Given
         workerSpy.fetchExchangeInfoResult = .failure(.noData)
-        workerSpy.fetchExchangeAssetsResult = .success([]) // ← IMPORTANTE: Definir para evitar nil
+        workerSpy.fetchExchangeAssetsResult = .success([])
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
-        let expectation = expectation(description: "Fetch detail info failure")
         
         // When
         sut.fetchDetail(request: request)
         
-        // Wait for async completion
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3.0)
+        await executorMock.executedOperations.first?()
         
         // Then
         XCTAssertTrue(presenterSpy.presentErrorCalled, "Should call presentError")
         XCTAssertFalse(presenterSpy.presentDetailCalled, "Should not call presentDetail")
     }
     
-    func testFetchDetailAssetsFailure() {
+    func testFetchDetailAssetsFailure() async {
         // Given
         let exchange = makeExchange()
         workerSpy.fetchExchangeInfoResult = .success(exchange)
         workerSpy.fetchExchangeAssetsResult = .failure(.noData)
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
-        let expectation = expectation(description: "Fetch detail assets failure")
         
         // When
         sut.fetchDetail(request: request)
         
-        // Wait for async completion
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3.0)
+        await executorMock.executedOperations.first?()
         
         // Then - MUDOU: Agora usa fallback []
         XCTAssertTrue(presenterSpy.presentDetailCalled, "Should call presentDetail with fallback")

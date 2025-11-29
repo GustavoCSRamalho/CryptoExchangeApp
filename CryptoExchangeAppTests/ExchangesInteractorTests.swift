@@ -5,7 +5,7 @@ final class ExchangesInteractorTests: XCTestCase {
     var sut: ExchangesListInteractor!
     var presenterSpy: ExchangesListPresenterSpy!
     var workerSpy: ExchangesListWorkerSpy!
-    var executorSpy: AsyncExecutorProtocol!
+    var executorSpy: AsyncExecutorMock!
     
     override func setUp() {
         super.setUp()
@@ -30,8 +30,7 @@ final class ExchangesInteractorTests: XCTestCase {
 
         sut.fetchExchanges(request: .init())
 
-        // Espera execução do executor
-        try? await Task.sleep(nanoseconds: 30_000_000)
+        await executorSpy.executedOperations.first?()
 
         XCTAssertTrue(presenterSpy.presentExchangesCalled)
     }
@@ -44,7 +43,7 @@ final class ExchangesInteractorTests: XCTestCase {
         // When
         sut.fetchExchanges(request: request)
         
-        try await Task.sleep(nanoseconds: 500_000_000)
+        await executorSpy.executedOperations.first?()
         
         // Then
         XCTAssertTrue(presenterSpy.presentErrorCalled)
@@ -59,7 +58,7 @@ final class ExchangesInteractorTests: XCTestCase {
         // When
         sut.fetchExchanges(request: Exchanges.FetchExchanges.Request())
 
-        try? await Task.sleep(nanoseconds: 30_000_000)
+        await executorSpy.executedOperations.first?()
 
         let request = Exchanges.SelectExchange.Request(index: 0)
         let result = sut.selectExchange(request: request)
