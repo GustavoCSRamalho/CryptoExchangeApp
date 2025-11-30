@@ -5,6 +5,11 @@ final class ExchangeAppUITests: XCTestCase {
     
     override func setUpWithError() throws {
         continueAfterFailure = false
+        
+        if app != nil {
+            app.terminate()
+        }
+        
         app = XCUIApplication()
         
         app.launchArguments = [
@@ -18,6 +23,7 @@ final class ExchangeAppUITests: XCTestCase {
     }
     
     override func tearDownWithError() throws {
+        app?.terminate()
         app = nil
     }
     
@@ -107,7 +113,13 @@ final class ExchangeAppUITests: XCTestCase {
         let finish = tableView.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
         start.press(forDuration: 0, thenDragTo: finish)
         
-        Thread.sleep(forTimeInterval: 1)
+        // Wait for refresh to complete
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true"),
+            object: tableView
+        )
+        let result = XCTWaiter.wait(for: [expectation], timeout: 2.0)
+        XCTAssertEqual(result, .completed)
         
         XCTAssertTrue(tableView.exists)
     }
@@ -166,8 +178,6 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
-        Thread.sleep(forTimeInterval: 1)
-        
         let idLabel = app.staticTexts
             .matching(NSPredicate(format: "label CONTAINS[c] 'ID:'"))
             .firstMatch
@@ -182,8 +192,6 @@ final class ExchangeAppUITests: XCTestCase {
         let firstCell = tableView.cells.firstMatch
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
-        
-        Thread.sleep(forTimeInterval: 1)
         
         let descriptionText = app.staticTexts
             .containing(NSPredicate(format: "label CONTAINS[c] 'cryptocurrency exchange'"))
@@ -200,8 +208,6 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
-        Thread.sleep(forTimeInterval: 1)
-        
         let websiteLabel = app.staticTexts
             .matching(NSPredicate(format: "label CONTAINS[c] 'Website'"))
             .firstMatch
@@ -216,8 +222,6 @@ final class ExchangeAppUITests: XCTestCase {
         let firstCell = tableView.cells.firstMatch
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
-        
-        Thread.sleep(forTimeInterval: 1)
         
         let makerFeeLabel = app.staticTexts
             .matching(NSPredicate(format: "label CONTAINS[c] 'Maker Fee'"))
@@ -234,8 +238,6 @@ final class ExchangeAppUITests: XCTestCase {
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
         
-        Thread.sleep(forTimeInterval: 1)
-        
         let takerFeeLabel = app.staticTexts
             .matching(NSPredicate(format: "label CONTAINS[c] 'Taker Fee'"))
             .firstMatch
@@ -250,8 +252,6 @@ final class ExchangeAppUITests: XCTestCase {
         let firstCell = tableView.cells.firstMatch
         XCTAssertTrue(firstCell.waitForExistence(timeout: 5))
         firstCell.tap()
-        
-        Thread.sleep(forTimeInterval: 1)
         
         let dateLabel = app.staticTexts
             .matching(NSPredicate(format: "label CONTAINS[c] 'Date Launched'"))

@@ -3,13 +3,23 @@ import XCTest
 final class ErrorHandlingUITests: XCTestCase {
     var app: XCUIApplication!
     
+    override func setUpWithError() throws {
+        continueAfterFailure = false
+        
+        if app != nil {
+            app.terminate()
+        }
+        
+        app = XCUIApplication()
+    }
+    
     override func tearDownWithError() throws {
+        app?.terminate()
         app = nil
     }
     
     func testUnauthorizedError() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -21,9 +31,6 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
-        Thread.sleep(forTimeInterval: 1)
-        
         // Then
         let errorTitle = app.staticTexts["Unauthorized"]
         XCTAssertTrue(errorTitle.waitForExistence(timeout: 5), "Should display unauthorized error")
@@ -34,7 +41,6 @@ final class ErrorHandlingUITests: XCTestCase {
     
     func testForbiddenError() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -46,9 +52,6 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
-        Thread.sleep(forTimeInterval: 1)
-        
         // Then
         let errorTitle = app.staticTexts["Access Denied"]
         XCTAssertTrue(errorTitle.waitForExistence(timeout: 5), "Should display forbidden error")
@@ -59,7 +62,6 @@ final class ErrorHandlingUITests: XCTestCase {
     
     func testRateLimitError() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -71,23 +73,19 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
-        Thread.sleep(forTimeInterval: 1)
-        
         // Then
         let errorTitle = app.staticTexts["Rate Limit Exceeded"]
         XCTAssertTrue(errorTitle.waitForExistence(timeout: 5), "Should display rate limit error")
         
         let retryButton = app.buttons["Wait & Retry"]
-        XCTAssertTrue(retryButton.exists, "Should display Wait & Retry button")
+        XCTAssertTrue(retryButton.waitForExistence(timeout: 3), "Should display Wait & Retry button")
         
         let cancelButton = app.buttons["Cancel"]
-        XCTAssertTrue(cancelButton.exists, "Should display Cancel button")
+        XCTAssertTrue(cancelButton.waitForExistence(timeout: 3), "Should display Cancel button")
     }
     
     func testServerError() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -98,8 +96,6 @@ final class ErrorHandlingUITests: XCTestCase {
             "MOCK_ERROR_TYPE": "500"
         ]
         app.launch()
-        
-        Thread.sleep(forTimeInterval: 1)
         
         // Then
         let errorTitle = app.staticTexts["Server Error"]
@@ -116,7 +112,6 @@ final class ErrorHandlingUITests: XCTestCase {
     
     func testBadRequestError() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -127,9 +122,6 @@ final class ErrorHandlingUITests: XCTestCase {
             "MOCK_ERROR_TYPE": "400"
         ]
         app.launch()
-        
-
-        Thread.sleep(forTimeInterval: 1)
         
         // Then
         let errorTitle = app.staticTexts["Invalid Request"]
@@ -144,7 +136,6 @@ final class ErrorHandlingUITests: XCTestCase {
     
     func testErrorIconDisplay() throws {
         // Given
-        app = XCUIApplication()
         app.launchArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US"
@@ -156,11 +147,8 @@ final class ErrorHandlingUITests: XCTestCase {
         ]
         app.launch()
         
-        // Wait for error view
-        Thread.sleep(forTimeInterval: 1)
-        
         // Then
         let errorIcon = app.images.firstMatch
-        XCTAssertTrue(errorIcon.exists, "Should display error icon")
+        XCTAssertTrue(errorIcon.waitForExistence(timeout: 5), "Should display error icon")
     }
 }
