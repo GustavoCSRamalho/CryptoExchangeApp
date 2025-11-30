@@ -113,7 +113,6 @@ final class ExchangeAppUITests: XCTestCase {
         let finish = tableView.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
         start.press(forDuration: 0, thenDragTo: finish)
         
-        // Wait for refresh to complete
         let expectation = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "exists == true"),
             object: tableView

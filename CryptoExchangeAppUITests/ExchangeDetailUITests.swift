@@ -53,7 +53,6 @@ final class ExchangeDetailUITests: XCTestCase {
             }
         }
         
-        // Wait for UI to be stable
         let scrollView = app.scrollViews.firstMatch
         _ = scrollView.waitForExistence(timeout: 1.0)
     }
@@ -74,25 +73,21 @@ final class ExchangeDetailUITests: XCTestCase {
         let scrollView = app.scrollViews.firstMatch
         XCTAssertTrue(scrollView.exists, "ScrollView should exist")
         
-        // Logo está dentro do scrollView
         let images = scrollView.images
         XCTAssertTrue(images.count > 0, "Should have at least one image (logo)")
     }
     
     func testDetailDisplaysName() throws {
-        // Binance está no nameLabel
         let nameLabel = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'Binance'")).firstMatch
         XCTAssertTrue(nameLabel.exists, "Should display Binance name")
     }
     
     func testDetailDisplaysID() throws {
-        // ID está formatado como "ID: 270"
         let idLabel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'ID:' OR label CONTAINS '270'")).firstMatch
         XCTAssertTrue(idLabel.exists, "Should display ID")
     }
     
     func testDetailDisplaysDescription() throws {
-        // Descrição mockada contém "cryptocurrency exchange"
         let descriptionLabel = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'cryptocurrency exchange'")).firstMatch
         XCTAssertTrue(descriptionLabel.exists, "Should display description")
     }
@@ -204,7 +199,6 @@ final class ExchangeDetailUITests: XCTestCase {
         
         let priceLabels = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '$'"))
         
-        // Wait for at least one price to appear
         let firstPrice = priceLabels.element(boundBy: 0)
         _ = firstPrice.waitForExistence(timeout: 2.0)
         
@@ -307,14 +301,5 @@ final class ExchangeDetailUITests: XCTestCase {
         
         let tableView = app.tables.firstMatch
         XCTAssertTrue(tableView.waitForExistence(timeout: 3), "Should return to list")
-    }
-    
-    // MARK: - Error State Tests (if needed)
-    
-    func testDetailWithoutMock() throws {
-        let isMockEnabled = app.launchEnvironment["MOCK_SUCCESS"] == "1"
-        if isMockEnabled {
-            throw XCTSkip("Test requires non-mock mode")
-        }
     }
 }
