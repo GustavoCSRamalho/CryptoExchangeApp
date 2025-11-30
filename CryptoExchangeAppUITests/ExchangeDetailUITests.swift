@@ -5,6 +5,11 @@ final class ExchangeDetailUITests: XCTestCase {
     
     override func setUpWithError() throws {
         continueAfterFailure = false
+        
+        if app != nil {
+            app.terminate()
+        }
+        
         app = XCUIApplication()
         
         app.launchArguments = [
@@ -48,8 +53,9 @@ final class ExchangeDetailUITests: XCTestCase {
             }
         }
         
-        // Aguardar adicional para garantir que a UI está estável
-        Thread.sleep(forTimeInterval: 0.5)
+        // Wait for UI to be stable
+        let scrollView = app.scrollViews.firstMatch
+        _ = scrollView.waitForExistence(timeout: 1.0)
     }
     
     override func tearDownWithError() throws {
@@ -99,7 +105,9 @@ final class ExchangeDetailUITests: XCTestCase {
         
         if !app.staticTexts["Website"].exists {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
+            
+            let websiteLabel = app.staticTexts["Website"]
+            _ = websiteLabel.waitForExistence(timeout: 1.0)
         }
         
         let websiteLabel = app.staticTexts["Website"]
@@ -139,14 +147,13 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<3 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let currenciesLabel = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS[c] 'Trading Pairs' OR label CONTAINS[c] 'Currencies' OR label CONTAINS[c] 'Assets'")
         ).firstMatch
         
-        XCTAssertTrue(currenciesLabel.exists, "Should display currencies section label")
+        XCTAssertTrue(currenciesLabel.waitForExistence(timeout: 2.0), "Should display currencies section label")
     }
     
     func testDetailDisplaysOriginProtocol() throws {
@@ -154,14 +161,13 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<4 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let ognLabel = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS 'Origin Protocol' OR label CONTAINS 'OGN'")
         ).firstMatch
         
-        XCTAssertTrue(ognLabel.exists, "Should display Origin Protocol")
+        XCTAssertTrue(ognLabel.waitForExistence(timeout: 2.0), "Should display Origin Protocol")
     }
     
     func testDetailDisplaysSmoothLovePotion() throws {
@@ -169,14 +175,13 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<4 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let slpLabel = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS 'Smooth Love Potion' OR label CONTAINS 'SLP'")
         ).firstMatch
         
-        XCTAssertTrue(slpLabel.exists, "Should display Smooth Love Potion")
+        XCTAssertTrue(slpLabel.waitForExistence(timeout: 2.0), "Should display Smooth Love Potion")
     }
     
     func testDetailDisplaysIDEX() throws {
@@ -184,11 +189,10 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<4 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let idexLabel = app.staticTexts["IDEX"]
-        XCTAssertTrue(idexLabel.exists, "Should display IDEX")
+        XCTAssertTrue(idexLabel.waitForExistence(timeout: 2.0), "Should display IDEX")
     }
     
     func testDetailDisplaysCurrencyPrices() throws {
@@ -196,10 +200,14 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<4 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let priceLabels = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '$'"))
+        
+        // Wait for at least one price to appear
+        let firstPrice = priceLabels.element(boundBy: 0)
+        _ = firstPrice.waitForExistence(timeout: 2.0)
+        
         XCTAssertGreaterThan(priceLabels.count, 0, "Should display currency prices")
     }
     
@@ -210,7 +218,6 @@ final class ExchangeDetailUITests: XCTestCase {
         XCTAssertTrue(scrollView.exists, "ScrollView should exist")
         
         scrollView.swipeUp()
-        Thread.sleep(forTimeInterval: 0.3)
         
         let navigationBar = app.navigationBars.firstMatch
         XCTAssertTrue(navigationBar.exists, "Should still be on detail screen")
@@ -222,7 +229,6 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<5 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let navigationBar = app.navigationBars.firstMatch
@@ -235,17 +241,14 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<3 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.2)
         }
         
         for _ in 0..<2 {
             scrollView.swipeDown()
-            Thread.sleep(forTimeInterval: 0.2)
         }
         
-
         let nameLabel = app.staticTexts.containing(NSPredicate(format: "label CONTAINS[c] 'Binance'")).firstMatch
-        XCTAssertTrue(nameLabel.exists, "Should display name after scrolling back up")
+        XCTAssertTrue(nameLabel.waitForExistence(timeout: 2.0), "Should display name after scrolling back up")
     }
     
     // MARK: - Navigation Tests
@@ -269,7 +272,6 @@ final class ExchangeDetailUITests: XCTestCase {
     // MARK: - Complete Flow Test
     
     func testCompleteDetailFlow() throws {
-        
         let scrollView = app.scrollViews.firstMatch
         XCTAssertTrue(scrollView.exists, "ScrollView should exist")
         
@@ -287,20 +289,18 @@ final class ExchangeDetailUITests: XCTestCase {
         
         for _ in 0..<4 {
             scrollView.swipeUp()
-            Thread.sleep(forTimeInterval: 0.3)
         }
         
         let hasAsset = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS 'Origin Protocol' OR label CONTAINS 'Smooth Love Potion' OR label CONTAINS 'IDEX'")
         ).firstMatch
-        XCTAssertTrue(hasAsset.exists, "Should display at least one asset")
+        XCTAssertTrue(hasAsset.waitForExistence(timeout: 2.0), "Should display at least one asset")
         
         for _ in 0..<3 {
             scrollView.swipeDown()
-            Thread.sleep(forTimeInterval: 0.2)
         }
         
-        XCTAssertTrue(nameLabel.exists, "Name should be visible after scrolling")
+        XCTAssertTrue(nameLabel.waitForExistence(timeout: 2.0), "Name should be visible after scrolling")
         
         let backButton = app.navigationBars.firstMatch.buttons.element(boundBy: 0)
         backButton.tap()
