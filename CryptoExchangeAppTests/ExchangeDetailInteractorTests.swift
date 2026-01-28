@@ -85,23 +85,17 @@ final class ExchangeDetailInteractorTests: XCTestCase {
         XCTAssertFalse(presenterSpy.presentErrorCalled, "Should not call presentError (uses fallback)")
     }
     
-    func testFetchDetailBothFailure() {
+    func testFetchDetailBothFailure() async {
         // Given
         workerSpy.fetchExchangeInfoResult = .failure(.serverError(statusCode: 500))
         workerSpy.fetchExchangeAssetsResult = .failure(.noData)
         let request = ExchangeDetail.FetchDetail.Request(exchangeId: 270)
         
-        let expectation = expectation(description: "Fetch detail both failure")
-        
         // When
         sut.fetchDetail(request: request)
         
         // Wait for async completion
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 3.0)
+        await executorMock.executedOperations.first?()
         
         // Then
         XCTAssertTrue(presenterSpy.presentErrorCalled, "Should call presentError")

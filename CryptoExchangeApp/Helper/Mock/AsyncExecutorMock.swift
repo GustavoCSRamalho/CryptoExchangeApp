@@ -3,9 +3,5 @@ final class AsyncExecutorMock: AsyncExecutorProtocol {
         
     func run(_ operation: @escaping () async -> Void) {
         executedOperations.append(operation)
-        
-        Task {
-            await operation()
-        }
     }
 }
