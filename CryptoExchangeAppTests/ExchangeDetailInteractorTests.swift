@@ -9,14 +9,15 @@ final class ExchangeDetailInteractorTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        sut = ExchangeDetailInteractor()
         presenterSpy = ExchangeDetailPresenterSpy()
         workerSpy = ExchangeDetailWorkerSpy()
         executorMock = AsyncExecutorMock()
-        
-        sut.presenter = presenterSpy
-        sut.worker = workerSpy
-        sut.executor = executorMock
+
+        sut = ExchangeDetailInteractor(
+            presenter: presenterSpy,
+            worker: workerSpy,
+            executor: executorMock
+        )
     }
     
     override func tearDown() {

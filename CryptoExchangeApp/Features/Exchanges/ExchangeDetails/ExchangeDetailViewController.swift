@@ -122,10 +122,12 @@ final class ExchangeDetailViewController: UIViewController {
     
     private var currenciesTableHeightConstraint: Constraint?
     
-    init(exchangeId: Int) {
-        self.exchangeId = exchangeId
-        super.init(nibName: nil, bundle: nil)
-    }
+    init(exchangeId: Int, interactor: ExchangeDetailInteractorProtocol) {
+       self.exchangeId = exchangeId
+       self.interactor = interactor
+       super.init(nibName: nil, bundle: nil)
+   }
+       
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) not implemented")

@@ -5,9 +5,15 @@ protocol ExchangeDetailInteractorProtocol {
 }
 
 final class ExchangeDetailInteractor: ExchangeDetailInteractorProtocol {
-    var presenter: ExchangeDetailPresenterProtocol?
-    var worker: ExchangeDetailWorkerProtocol?
-    var executor: AsyncExecutorProtocol?
+    private var presenter: ExchangeDetailPresenterProtocol?
+    private var worker: ExchangeDetailWorkerProtocol?
+    private var executor: AsyncExecutorProtocol?
+    
+    init(presenter: ExchangeDetailPresenterProtocol? = nil, worker: ExchangeDetailWorkerProtocol? = nil, executor: AsyncExecutorProtocol? = nil) {
+        self.presenter = presenter
+        self.worker = worker
+        self.executor = executor
+    }
     
     func fetchDetail(request: ExchangeDetail.FetchDetail.Request) {
         let exchangeId = request.exchangeId

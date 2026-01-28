@@ -2,11 +2,6 @@ import UIKit
 
 enum ExchangesListFactory {
     static func make() -> UIViewController {
-        let viewController = ExchangesListViewController()
-        let interactor = ExchangesListInteractor()
-        let presenter = ExchangesListPresenter()
-        let executor = AsyncExecutor()
-        
         let network: NetworkServiceProtocol
         if UITestingHelper.isUITesting {
             let mockService = MockNetworkService()
@@ -37,14 +32,23 @@ enum ExchangesListFactory {
             network = NetworkService()
         }
         
-        let router = ExchangesListCoordinator()
         let worker = ExchangesListWorker(networkService: network)
+        let executor = AsyncExecutor()
+        let presenter = ExchangesListPresenter()
         
-        viewController.interactor = interactor
-        viewController.router = router
-        interactor.presenter = presenter
-        interactor.worker = worker
-        interactor.executor = executor
+        let interactor = ExchangesListInteractor(
+            presenter: presenter,
+            worker: worker,
+            executor: executor
+        )
+        
+        let router = ExchangesListCoordinator()
+        
+        let viewController = ExchangesListViewController(
+            interactor: interactor,
+            router: router
+        )
+        
         presenter.viewController = viewController
         router.viewController = viewController
         

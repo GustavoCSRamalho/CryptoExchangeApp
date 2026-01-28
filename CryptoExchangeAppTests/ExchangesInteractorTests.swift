@@ -10,12 +10,14 @@ final class ExchangesInteractorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         executorSpy = AsyncExecutorMock()
-        sut = ExchangesListInteractor()
         presenterSpy = ExchangesListPresenterSpy()
         workerSpy = ExchangesListWorkerSpy()
-        sut.presenter = presenterSpy
-        sut.worker = workerSpy
-        sut.executor = executorSpy
+
+        sut = ExchangesListInteractor(
+            presenter: presenterSpy,
+            worker: workerSpy,
+            executor: executorSpy
+        )
     }
     
     override func tearDown() {

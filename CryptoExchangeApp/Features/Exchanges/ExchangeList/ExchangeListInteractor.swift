@@ -6,11 +6,16 @@ protocol ExchangesListInteractorProtocol {
 }
 
 final class ExchangesListInteractor: ExchangesListInteractorProtocol {
-    var presenter: ExchangesListPresenterProtocol?
-    var worker: ExchangesListWorkerProtocol?
-    var executor: AsyncExecutorProtocol?
-
+    private var presenter: ExchangesListPresenterProtocol?
+    private var worker: ExchangesListWorkerProtocol?
+    private var executor: AsyncExecutorProtocol?
     private var exchanges: [ExchangeListing] = []
+    
+    init(presenter: ExchangesListPresenterProtocol? = nil, worker: ExchangesListWorkerProtocol? = nil, executor: AsyncExecutorProtocol? = nil) {
+        self.presenter = presenter
+        self.worker = worker
+        self.executor = executor
+    }
 
     func fetchExchanges(request: Exchanges.FetchExchanges.Request) {
         executor?.run { [weak self] in

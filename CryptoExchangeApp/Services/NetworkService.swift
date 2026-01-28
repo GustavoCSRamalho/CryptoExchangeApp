@@ -30,19 +30,17 @@ final class NetworkService: NetworkServiceProtocol {
             method: .get,
             parameters: parameters,
             headers: headers
-        ).validate().responseData { response in
+        )
+        .validate()
+        .responseDecodable(of: T.self) { response in
             switch response.result {
-            case .success(let data):
-                do {
-                    let decoder = JSONDecoder()
-                    let decodedResponse = try decoder.decode(T.self, from: data)
-                    completion(.success(decodedResponse))
-                } catch {
-                    completion(.failure(.decodingError))
-                }
+            case .success(let decodedResponse):
+                completion(.success(decodedResponse))
             case .failure(let error):
                 if let statusCode = response.response?.statusCode {
                     completion(.failure(.serverError(statusCode: statusCode)))
+                } else if error.isResponseSerializationError {
+                    completion(.failure(.decodingError))
                 } else {
                     completion(.failure(.networkFailure(error)))
                 }
